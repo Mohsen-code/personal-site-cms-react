@@ -8,6 +8,9 @@ import {
   Typography,
   makeStyles,
   Box,
+  Button,
+  Fab,
+  withStyles,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import LanguageIcon from "@material-ui/icons/Language";
@@ -22,6 +25,11 @@ import ImageGallery from "../components/include/ImageGallery";
 import AppContext from "../store/app-context";
 import Section from "../components/Home/Section";
 import PowerfulFeaturesItem from "../components/Home/PowerfulFeaturesItem";
+import FAIcon from "../components/include/FontAwesomeIcon";
+
+import { faPhone,faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { pink, lightGreen, grey } from "@material-ui/core/colors";
 
 // styles
 import "../styles/style.scss";
@@ -60,6 +68,36 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
 }));
+
+const InstagramButton = withStyles((theme) => ({
+  root: {
+    color: theme.palette.getContrastText(pink[400]),
+    backgroundColor: pink[400],
+    "&:hover": {
+      backgroundColor: pink[700],
+    },
+  },
+}))(Fab);
+
+const PhoneButton = withStyles((theme) => ({
+  root: {
+    color: theme.palette.getContrastText(lightGreen[400]),
+    backgroundColor: lightGreen[400],
+    "&:hover": {
+      backgroundColor: lightGreen[700],
+    },
+  },
+}))(Fab);
+
+const UpArrowButton = withStyles((theme) => ({
+  root: {
+    color: theme.palette.getContrastText(grey[400]),
+    backgroundColor: grey[400],
+    "&:hover": {
+      backgroundColor: grey[700],
+    },
+  },
+}))(Fab);
 
 const Home = () => {
   const ctx = useContext(AppContext);
@@ -152,6 +190,32 @@ const Home = () => {
           >
             <Box>
               <ImageGallery images={imageGalleryItems} />
+            </Box>
+          </Section>
+
+          <Section
+            title="Mohsen Fallahnejad"
+            subTitle="The Best Web Developer"
+            description="I have at least 5 years experience in web development with Javascript, Typescript, VueJS, ReactJS, Bootstrap and many libraries"
+            styles={{ padding: "0 0 10px 0" }}
+          >
+            <Box 
+            display="flex" 
+            justifyContent="space-evenly"
+            width="200px"
+            margin="20px auto"
+            >
+              <InstagramButton size="small">
+                <FAIcon icon={faInstagram} fontSize="lg"/>
+              </InstagramButton>
+
+              <PhoneButton size="small">
+                <FAIcon icon={faPhone} fontSize="lg"/>
+              </PhoneButton>
+
+              <UpArrowButton size="small">
+                <FAIcon icon={faAngleUp} fontSize="lg"/>
+              </UpArrowButton>
             </Box>
           </Section>
         </Grid>

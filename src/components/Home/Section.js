@@ -8,12 +8,12 @@ const useStyle = makeStyles({
   },
 });
 
-const Section = ({ title, subTitle, description, children }) => {
+const Section = ({ title, subTitle, description, styles, children }) => {
   const classes = useStyle();
 
   return (
     <React.Fragment>
-      <Grid item xs={12}>
+      <Grid item xs={12} style={styles}>
         <Divider />
         <Box textAlign="center" margin="20px 0 0 0">
           {(title || subTitle) && (
