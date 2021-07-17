@@ -7,10 +7,7 @@ import {
   IconButton,
   Typography,
   makeStyles,
-  Card,
-  CardContent,
-  Divider,
-  Box
+  Box,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import LanguageIcon from "@material-ui/icons/Language";
@@ -21,8 +18,10 @@ import DonutLarge from "@material-ui/icons/DonutLarge";
 import SmartphoneIcon from "@material-ui/icons/Smartphone";
 import CodeIcon from "@material-ui/icons/Code";
 import ImageSlider from "../components/include/ImageSlider";
-import { lightGreen } from "@material-ui/core/colors";
+import ImageGallery from "../components/include/ImageGallery";
 import AppContext from "../store/app-context";
+import Section from "../components/Home/Section";
+import PowerfulFeaturesItem from "../components/Home/PowerfulFeaturesItem";
 
 // styles
 import "../styles/style.scss";
@@ -40,24 +39,25 @@ const sliderItems = [
   { src: Image4, title: "test4", subTitle: "subTitle4" },
 ];
 
+const imageGalleryItems = [
+  { src: Image1, thumbnail: Image1 },
+  { src: Image2, thumbnail: Image2 },
+  { src: Image3, thumbnail: Image3 },
+  { src: Image4, thumbnail: Image4 },
+];
+
 const useStyles = makeStyles((theme) => ({
   appBar: {
     // width: '100vw'
     backgroundColor: "#13151a",
     fontSize: "12px",
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
   title: {
     flexGrow: 1,
     fontWeight: "bold",
   },
-  media: {
-    height: "200px",
-  },
-  subTitle: {
-    color: lightGreen[500],
+  menuButton: {
+    marginRight: theme.spacing(2),
   },
 }));
 
@@ -96,156 +96,64 @@ const Home = () => {
             </Toolbar>
           </AppBar>
         </Grid>
-        <Grid item xs={12} style={{ padding: "56px 0 0 0" }}>
-          <ImageSlider images={sliderItems} />
+        <Grid item xs={12}>
+          <Box padding="56px 0 0 0">
+            <ImageSlider images={sliderItems} />
+          </Box>
         </Grid>
       </Grid>
 
       <Container>
         <Grid container>
-          <Grid item xs={12} style={{ padding: "10px 0 0 0" }}>
-            <Divider />
-            <Card elevation={0}>
-              <CardContent>
-                <Typography
-                  variant="h5"
-                  align="center"
-                  className={classes.title}
-                >
-                  Powerful Features
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  align="center"
-                  className={classes.subTitle}
-                >
-                  To make your mobile page awesome!
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  align="center"
-                  color="textSecondary"
-                >
-                  DuoDrawer brings the best in class features for your website.
-                  Speed and flexibility and ease of use!
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Section
+            title="Powerful Features"
+            subTitle="To make your mobile page awesome!"
+            description="DuoDrawer brings the best in class features for your website.
+                  Speed and flexibility and ease of use!"
+          >
+            <PowerfulFeaturesItem
+              title="Lightning Fast"
+              subTitle="Designed to be ready when you are. Click and Load."
+              iconColor="#f6bb42"
+            >
+              <FlashOnIcon fontSize="large" />
+            </PowerfulFeaturesItem>
 
-          <Grid item xs={6}>
-            <Card elevation={0}>
-              <CardContent>
-                <div style={{
-                  textAlign: 'center',
-                  color: '#f6bb42'
-                }}>
-                  <FlashOnIcon fontSize="large"/>
-                </div>
-                <Typography
-                  variant="h6"
-                  align="center"
-                  className={classes.title}
-                >
-                  Lightning Fast
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  align="center"
-                  color="textSecondary"
-                >
-                  Designed to be ready when you are. Click and Load.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+            <PowerfulFeaturesItem
+              title="Best Support"
+              subTitle="We treat others like we want to be treated."
+              iconColor="#da4453"
+            >
+              <DonutLarge fontSize="large" />
+            </PowerfulFeaturesItem>
 
-          <Grid item xs={6}>
-            <Card elevation={0}>
-              <CardContent>
-                <div style={{
-                  textAlign: 'center',
-                  color: '#da4453'
-                }}>
-                  <DonutLarge fontSize="large"/>
-                </div>
-                <Typography
-                  variant="h6"
-                  align="center"
-                  className={classes.title}
-                >
-                  Best Support
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  align="center"
-                  color="textSecondary"
-                >
-                  We treat others like we want to be treated.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+            <PowerfulFeaturesItem
+              title="PWA Ready"
+              subTitle="Add it to your home screen and enjoy it as a full PWA."
+              iconColor="#4a89dc"
+            >
+              <SmartphoneIcon fontSize="large" />
+            </PowerfulFeaturesItem>
 
-          <Grid item xs={6}>
-            <Card elevation={0}>
-              <CardContent>
-                <div style={{
-                  textAlign: 'center',
-                  color: '#4a89dc'
-                }}>
-                  <SmartphoneIcon fontSize="large"/>
-                </div>
-                <Typography
-                  variant="h6"
-                  align="center"
-                  className={classes.title}
-                >
-                  PWA Ready
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  align="center"
-                  color="textSecondary"
-                >
-                  Add it to your home screen and enjoy it as a full PWA.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+            <PowerfulFeaturesItem
+              title="Material UI Built"
+              subTitle="Designed to be easy to edit, with familiar code."
+              iconColor="#8cc152"
+            >
+              <CodeIcon fontSize="large" />
+            </PowerfulFeaturesItem>
+          </Section>
 
-
-          <Grid item xs={6}>
-            <Card elevation={0}>
-              <CardContent>
-                <div style={{
-                  textAlign: 'center',
-                  color: '#8cc152'
-                }}>
-                  <CodeIcon fontSize="large"/>
-                </div>
-                <Typography
-                  variant="h6"
-                  align="center"
-                  className={classes.title}
-                >
-                  Material UI Built
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  align="center"
-                  color="textSecondary"
-                >
-                  Designed to be easy to edit, with familiar code.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-
-          <Grid item xs={12}>
-            <div style={{ height: "1024px" }}></div>
-          </Grid>
+          <Section
+            title="Featured Projects"
+            subTitle="Our latest and Greatest Works!"
+            description="Products we are proud to showcase and show off to the world. We
+            think you'll love them!"
+          >
+            <Box>
+              <ImageGallery images={imageGalleryItems} />
+            </Box>
+          </Section>
         </Grid>
       </Container>
     </div>
@@ -253,22 +161,3 @@ const Home = () => {
 };
 
 export default Home;
-
-/* 
-<Card elevation={0}>
-              <CardMedia className={classes.media} image={Image4} />
-              <CardContent>
-                <Typography variant="h6" color="textPrimary" component="h1">
-                  Post Title
-                </Typography>
-                <Typography variant="subtitle2" className={classes.subTitle}>
-                  Your awesome protfolio subtitle here.
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  This impressive paella is a perfect party dish and a fun meal
-                  to cook together with your guests. Add 1 cup of frozen peas
-                  along with the mussels, if you like.
-                </Typography>
-              </CardContent>
-            </Card>
-             */
