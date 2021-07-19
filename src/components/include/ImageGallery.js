@@ -1,3 +1,4 @@
+import React from 'react'
 import LightGallery from "lightgallery/react";
 
 // import styles
@@ -44,4 +45,4 @@ const ImageGallery = ({ images }) => {
   );
 };
 
-export default ImageGallery;
+export default React.memo(ImageGallery);

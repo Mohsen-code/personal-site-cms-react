@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import {
   Container,
   Grid,
@@ -8,7 +8,6 @@ import {
   Typography,
   makeStyles,
   Box,
-  Button,
   Fab,
   withStyles,
 } from "@material-ui/core";
@@ -27,7 +26,7 @@ import Section from "../components/Home/Section";
 import PowerfulFeaturesItem from "../components/Home/PowerfulFeaturesItem";
 import FAIcon from "../components/include/FontAwesomeIcon";
 
-import { faPhone,faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { faPhone, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { pink, lightGreen, grey } from "@material-ui/core/colors";
 
@@ -40,19 +39,6 @@ import Image2 from "../assets/images/2.jpg";
 import Image3 from "../assets/images/3.jpg";
 import Image4 from "../assets/images/4.jpg";
 
-const sliderItems = [
-  { src: Image1, title: "test1", subTitle: "subTitle1" },
-  { src: Image2, title: "test2", subTitle: "subTitle2" },
-  { src: Image3, title: "test3", subTitle: "subTitle3" },
-  { src: Image4, title: "test4", subTitle: "subTitle4" },
-];
-
-const imageGalleryItems = [
-  { src: Image1, thumbnail: Image1 },
-  { src: Image2, thumbnail: Image2 },
-  { src: Image3, thumbnail: Image3 },
-  { src: Image4, thumbnail: Image4 },
-];
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -102,6 +88,26 @@ const UpArrowButton = withStyles((theme) => ({
 const Home = () => {
   const ctx = useContext(AppContext);
   const classes = useStyles();
+
+  const sliderItems = useMemo(
+    () => ([
+      { src: Image1, title: "test1", subTitle: "subTitle1" },
+      { src: Image2, title: "test2", subTitle: "subTitle2" },
+      { src: Image3, title: "test3", subTitle: "subTitle3" },
+      { src: Image4, title: "test4", subTitle: "subTitle4" },
+    ]),
+    []
+  );
+
+  const imageGalleryItems = useMemo(
+    () => ([
+      { src: Image1, thumbnail: Image1 },
+      { src: Image2, thumbnail: Image2 },
+      { src: Image3, thumbnail: Image3 },
+      { src: Image4, thumbnail: Image4 },
+    ]),
+    []
+  );
 
   return (
     <div className="App">
@@ -199,22 +205,22 @@ const Home = () => {
             description="I have at least 5 years experience in web development with Javascript, Typescript, VueJS, ReactJS, Bootstrap and many libraries"
             styles={{ padding: "0 0 10px 0" }}
           >
-            <Box 
-            display="flex" 
-            justifyContent="space-evenly"
-            width="200px"
-            margin="20px auto"
+            <Box
+              display="flex"
+              justifyContent="space-evenly"
+              width="200px"
+              margin="20px auto"
             >
               <InstagramButton size="small">
-                <FAIcon icon={faInstagram} fontSize="lg"/>
+                <FAIcon icon={faInstagram} fontSize="lg" />
               </InstagramButton>
 
               <PhoneButton size="small">
-                <FAIcon icon={faPhone} fontSize="lg"/>
+                <FAIcon icon={faPhone} fontSize="lg" />
               </PhoneButton>
 
               <UpArrowButton size="small">
-                <FAIcon icon={faAngleUp} fontSize="lg"/>
+                <FAIcon icon={faAngleUp} fontSize="lg" />
               </UpArrowButton>
             </Box>
           </Section>
