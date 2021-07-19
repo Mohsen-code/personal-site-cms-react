@@ -1,27 +1,18 @@
-import { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   Container,
   Grid,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  makeStyles,
   Box,
   Fab,
   withStyles,
 } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
-import LanguageIcon from "@material-ui/icons/Language";
-import ColorPaletteIcon from "@material-ui/icons/Palette";
-import EmailIcon from "@material-ui/icons/Email";
+
 import FlashOnIcon from "@material-ui/icons/FlashOn";
 import DonutLarge from "@material-ui/icons/DonutLarge";
 import SmartphoneIcon from "@material-ui/icons/Smartphone";
 import CodeIcon from "@material-ui/icons/Code";
 import ImageSlider from "../components/include/ImageSlider";
 import ImageGallery from "../components/include/ImageGallery";
-import AppContext from "../store/app-context";
 import Section from "../components/Home/Section";
 import PowerfulFeaturesItem from "../components/Home/PowerfulFeaturesItem";
 import FAIcon from "../components/include/FontAwesomeIcon";
@@ -38,22 +29,6 @@ import Image1 from "../assets/images/1.jpg";
 import Image2 from "../assets/images/2.jpg";
 import Image3 from "../assets/images/3.jpg";
 import Image4 from "../assets/images/4.jpg";
-
-
-const useStyles = makeStyles((theme) => ({
-  appBar: {
-    // width: '100vw'
-    backgroundColor: "#13151a",
-    fontSize: "12px",
-  },
-  title: {
-    flexGrow: 1,
-    fontWeight: "bold",
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-}));
 
 const InstagramButton = withStyles((theme) => ({
   root: {
@@ -86,62 +61,31 @@ const UpArrowButton = withStyles((theme) => ({
 }))(Fab);
 
 const Home = () => {
-  const ctx = useContext(AppContext);
-  const classes = useStyles();
-
   const sliderItems = useMemo(
-    () => ([
+    () => [
       { src: Image1, title: "test1", subTitle: "subTitle1" },
       { src: Image2, title: "test2", subTitle: "subTitle2" },
       { src: Image3, title: "test3", subTitle: "subTitle3" },
       { src: Image4, title: "test4", subTitle: "subTitle4" },
-    ]),
+    ],
     []
   );
 
   const imageGalleryItems = useMemo(
-    () => ([
+    () => [
       { src: Image1, thumbnail: Image1 },
       { src: Image2, thumbnail: Image2 },
       { src: Image3, thumbnail: Image3 },
       { src: Image4, thumbnail: Image4 },
-    ]),
+    ],
     []
   );
 
   return (
-    <div className="App">
+    <React.Fragment>
       <Grid container>
         <Grid item xs={12}>
-          <AppBar position="fixed" className={classes.appBar}>
-            <Toolbar>
-              <IconButton
-                edge="start"
-                className={classes.menuButton}
-                color="inherit"
-                aria-label="menu"
-                onClick={ctx.toggleShowDrawer}
-              >
-                <MenuIcon fontSize="small" />
-              </IconButton>
-              <Typography variant="subtitle2" className={classes.title}>
-                Mohsen App
-              </Typography>
-              <Box component="div"></Box>
-              <IconButton edge="end" color="inherit" aria-label="menu">
-                <LanguageIcon fontSize="small" />
-              </IconButton>
-              <IconButton edge="end" color="inherit" aria-label="menu">
-                <ColorPaletteIcon fontSize="small" />
-              </IconButton>
-              <IconButton edge="end" color="inherit" aria-label="menu">
-                <EmailIcon fontSize="small" />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
-        </Grid>
-        <Grid item xs={12}>
-          <Box padding="56px 0 0 0">
+          <Box>
             <ImageSlider images={sliderItems} />
           </Box>
         </Grid>
@@ -226,7 +170,7 @@ const Home = () => {
           </Section>
         </Grid>
       </Container>
-    </div>
+    </React.Fragment>
   );
 };
 
