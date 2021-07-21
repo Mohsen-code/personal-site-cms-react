@@ -23,10 +23,16 @@ export default class LocalStorage {
     localStorage.setItem(this.dbName, JSON.stringify(items));
   }
 
-  getItem(itemId) {
+  getItemById(itemId) {
     const items = this.getItems();
     const [item] = items.filter((itemArg) => itemArg.id === itemId);
     return item;
+  }
+
+  getUserByEmail(email) {
+    const users = this.getItems();
+    const [user] = users.filter((userArg) => userArg.email === email);
+    return user;
   }
 
   addItem(item) {
