@@ -57,7 +57,6 @@ const ViewsWrapper = ({ children }) => {
 
   const history = useHistory();
   const route = useLocation();
-  console.log(route.pathname);
 
   useEffect(() => {
     switch (route.pathname) {
