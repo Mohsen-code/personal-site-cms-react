@@ -5,6 +5,7 @@ import Home from "./views/Home";
 import Blog from "./views/Blog";
 import Login from "./views/Login";
 import Register from "./views/Register";
+import Panel from "./views/Panel/Index";
 
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import ViewsWrapper from "./ViewsWrapper";
@@ -42,14 +43,17 @@ function App() {
             <Route path="/" exact>
               <Home />
             </Route>
-            <Route path="/blog">
+            <Route path="/blog" exact>
               <Blog />
             </Route>
-            <Route path="/login">
+            <Route path="/login" exact>
               <Login />
             </Route>
-            <Route path="/register">
+            <Route path="/register" exact>
               <Register />
+            </Route>
+            <Route path="/panel">
+              <Panel />
             </Route>
           </ViewsWrapper>
         </Switch>
