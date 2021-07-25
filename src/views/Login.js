@@ -39,7 +39,6 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm();
   const [message, setMessage] = useState({
