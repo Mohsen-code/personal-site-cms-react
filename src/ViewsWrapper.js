@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, Link } from "react-router-dom";
 import {
   SwipeableDrawer,
   BottomNavigation,
@@ -65,13 +65,14 @@ const ViewsWrapper = ({ children }) => {
         break;
       case "/login":
       case "/register":
+      case "/panel":
         setValue("Login");
         break;
       case "/blog":
         setValue("Blog");
         break;
       default:
-        throw new Error("route not found!");
+        console.log("hey2");
     }
   }, [route.pathname]);
 
@@ -89,9 +90,13 @@ const ViewsWrapper = ({ children }) => {
         history.push("/blog");
         break;
       default:
-        throw new Error("route not found!");
+        console.log("hey");
     }
   };
+
+  let userIconLabel = "Login";
+  if (route.pathname === "/register") userIconLabel = "Register";
+  if (route.pathname === "/panel") userIconLabel = "Panel";
 
   return (
     <React.Fragment>
@@ -101,7 +106,9 @@ const ViewsWrapper = ({ children }) => {
         onOpen={() => ctx.toggleShowDrawer()}
         onClose={() => ctx.toggleShowDrawer()}
       >
-        <h1>Hello World</h1>
+        <Link to="/panel">
+          <h1>Panel</h1>
+        </Link>
       </SwipeableDrawer>
 
       <AppBar position="fixed" className={classes.appBar}>
@@ -138,7 +145,7 @@ const ViewsWrapper = ({ children }) => {
         className={classes.root}
       >
         <CustomBottomNavigationAction
-          label={route.pathname === '/login' ? 'login' : 'register'}
+          label={userIconLabel}
           value="Login"
           icon={<FAIcon icon={faUser} fontSize="lg" />}
         />
