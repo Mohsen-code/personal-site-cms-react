@@ -1,3 +1,4 @@
+import {v4 as uuid} from 'uuid'
 import {useState, useRef} from "react";
 import {
     Container,
@@ -13,6 +14,8 @@ import {
 } from "@material-ui/core";
 import CustomButton from "../../adapters/CustomButton";
 import {Editor} from '@tinymce/tinymce-react';
+import noImage from '../../assets/images/no-image.jpg'
+import LocalStorage from "../../adapters/LocalStorage";
 
 const useStyles = makeStyles({
     card: {
@@ -25,21 +28,70 @@ const useStyles = makeStyles({
     }
 })
 
+let ls = new LocalStorage("app-posts");
+
 const Post = () => {
     const classes = useStyles();
     const PrimaryButton = new CustomButton('primary');
     const ErrorButton = new CustomButton('error');
     const [editorState, setEditorState] = useState("");
+    const [thumbnail, setThumbnail] = useState(null)
+    const [title, setTitle] = useState("");
+    const [summary, setSummary] = useState("");
+    const [content, setContent] = useState("");
+    const [tags, setTags] = useState("");
+
 
     const editorRef = useRef(null);
-    const log = () => {
-        if (editorRef.current) {
-            console.log(editorRef.current.getContent());
+    const fileRef = useRef();
+
+    const handleFileChooserChanges = event => {
+        if (!event.target.files) return;
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(event.target.files[0])
+        fileReader.onload = () => {
+            setThumbnail(fileReader.result)
         }
-    };
+    }
+
+    const handleFileChooser = () => {
+        fileRef.current.click()
+    }
+
+    const handleTitleChanges = (event) => {
+        setTitle(event.target.value);
+    }
+
+    const handleSummaryChanges = event => {
+        setSummary(event.target.value);
+    }
+
+    const handleTagsChanges = event => {
+        setTags(event.target.value)
+    }
 
     const handleCreateNewPost = () => {
-        console.log('editorState => ', editorState.toJS())
+        if (editorRef.current) {
+            const post = {
+                id: uuid().replace(/-/g, ""),
+                thumbnail,
+                title,
+                summary,
+                content: editorRef.current.getContent(),
+                tags
+            }
+
+            ls.addItem(post);
+            resetForm()
+        }
+    }
+
+    const resetForm = () => {
+        setThumbnail(null)
+        setTitle("")
+        setSummary("")
+        setTags("")
+        editorRef.current.resetContent("")
     }
 
     return (
@@ -48,13 +100,19 @@ const Post = () => {
                 <Grid item xs={12}>
                     <Card className={classes.card}>
                         <CardContent>
+                            <Box>
+                                <img src={thumbnail ? thumbnail : noImage} style={{width: '100%'}}/>
+                            </Box>
                             <Box margin="10px 0">
-                                <PrimaryButton>Upload image</PrimaryButton>
+                                <input type="file" ref={fileRef} onChange={handleFileChooserChanges} hidden/>
+                                <PrimaryButton onClick={handleFileChooser}>Upload image</PrimaryButton>
                             </Box>
                             <Box>
                                 <TextField
                                     label="Title"
                                     fullWidth
+                                    value={title}
+                                    onChange={handleTitleChanges}
                                 />
                             </Box>
                             <Box margin="10px 0 0 0">
@@ -63,13 +121,15 @@ const Post = () => {
                                     fullWidth
                                     multiline
                                     rows={5}
+                                    value={summary}
+                                    onChange={handleSummaryChanges}
                                 />
                             </Box>
                             <Box margin="10px 0 0 0">
                                 <Typography variant="h6">Content: </Typography>
                                 <Editor
                                     onInit={(evt, editor) => editorRef.current = editor}
-                                    initialValue="<p>This is the initial content of the editor.</p>"
+                                    initialValue=""
                                     init={{
                                         height: 500,
                                         menubar: false,
@@ -85,11 +145,18 @@ const Post = () => {
                                         content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
                                     }}
                                 />
-                                <button onClick={log}>Log editor content</button>
+                            </Box>
+                            <Box margin="10px 0 0 0">
+                                <TextField
+                                    label="Tags"
+                                    fullWidth
+                                    value={tags}
+                                    onChange={handleTagsChanges}
+                                />
                             </Box>
                         </CardContent>
                         <Divider/>
-                        <CardActions>
+                        <CardActions style={{justifyContent: "space-between"}}>
                             <PrimaryButton onClick={handleCreateNewPost}>Create</PrimaryButton>
                             <ErrorButton>Cancel</ErrorButton>
                         </CardActions>
