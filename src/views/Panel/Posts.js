@@ -1,4 +1,5 @@
-import {useState} from "react";
+import {useHistory, useRouteMatch} from 'react-router-dom'
+import useUtil from "../../hooks/util";
 import {
     Container,
     Grid,
@@ -13,7 +14,6 @@ import {
     Box,
     Card,
     CardContent,
-    Divider,
     makeStyles
 } from "@material-ui/core";
 import CustomButton from "../../adapters/CustomButton";
@@ -26,13 +26,16 @@ const useStyles = makeStyles({
 const Posts = () => {
     const classes = useStyles();
     const PrimaryButton = new CustomButton('primary');
+    const history = useHistory();
+    const {path} = useRouteMatch();
+    const util = useUtil();
 
     return (
         <Container>
             <Grid container>
                 <Grid item xs={12}>
                     <Box margin="20px 0">
-                        <PrimaryButton>New Post</PrimaryButton>
+                        <PrimaryButton onClick={() => history.push(`${util.routeParent(path)}/new-post`)}>New Post</PrimaryButton>
                     </Box>
                 </Grid>
                 <Grid item xs={12}>
