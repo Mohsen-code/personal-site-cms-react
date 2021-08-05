@@ -6,11 +6,20 @@ export default class TodoList {
 
     newTodo(title, description) {
         const id = uuid().replace(/-/g, "");
-        this.ls.addItem({id, title, description});
+        const isDone = false;
+        this.ls.addItem({id, title, description, isDone});
     }
 
-    getTodos() {
-        return this.ls.getItems();
+    getTodos(type = "all") {
+        const todos = this.ls.getItems();
+        switch (type) {
+            case "finished":
+                return todos.filter(todo => todo.isDone === true);
+            case "unFinished":
+                return todos.filter(todo => todo.isDone === false);
+            default:
+                return todos;
+        }
     }
 
     getTodo(todoId) {
