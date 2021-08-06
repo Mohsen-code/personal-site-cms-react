@@ -21,7 +21,7 @@ import {
 import {useForm} from "react-hook-form";
 import FAIcon from "../../include/FontAwesomeIcon";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
-import {blue, green, amber, red, grey} from "@material-ui/core/colors";
+import {blue, grey} from "@material-ui/core/colors";
 
 import Dialog from "../../include/Dialog";
 import CustomButton from "../../../adapters/CustomButton";
@@ -144,7 +144,7 @@ const TodoList = () => {
         <React.Fragment>
             {
                 <Dialog
-                    cansleBtnText="close"
+                    cancelBtnText="close"
                     show={showDialog}
                     handleClose={() => setShowDialog(false)}
                     doneBtnText={editMode ? "update" : "add"}
