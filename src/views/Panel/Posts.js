@@ -14,28 +14,47 @@ import {
     Box,
     Card,
     CardContent,
-    makeStyles
+    makeStyles, Avatar
 } from "@material-ui/core";
 import CustomButton from "../../adapters/CustomButton";
+import {PostDAO} from "../../DB/PostDAO";
+import {useEffect, useState} from "react";
+import CustomIconButton from "../../adapters/CustomIconButton";
+import FAIcon from '../../components/include/FontAwesomeIcon';
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import {Alert} from "@material-ui/lab";
+
 
 const useStyles = makeStyles({
     paper: {
         backgroundColor: "#292c31",
     }
 });
+
+const postDAO = new PostDAO();
+
 const Posts = () => {
     const classes = useStyles();
     const PrimaryButton = new CustomButton('primary');
+    const WarningIconButton = new CustomIconButton('warning');
     const history = useHistory();
     const {path} = useRouteMatch();
     const util = useUtil();
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        postDAO.getPosts().then(posts => {
+            setPosts(posts)
+        })
+    }, [])
 
     return (
         <Container>
             <Grid container>
                 <Grid item xs={12}>
                     <Box margin="20px 0">
-                        <PrimaryButton onClick={() => history.push(`${util.routeParent(path)}/new-post`)}>New Post</PrimaryButton>
+                        <PrimaryButton onClick={() => history.push(`${util.routeParent(path)}/new-post`)}>New
+                            Post</PrimaryButton>
                     </Box>
                 </Grid>
                 <Grid item xs={12}>
@@ -47,40 +66,45 @@ const Posts = () => {
                                         <TableRow>
                                             <TableCell>Thumbnail</TableCell>
                                             <TableCell>Title</TableCell>
-                                            <TableCell>visit</TableCell>
-                                            <TableCell>link</TableCell>
-                                            <TableCell>options</TableCell>
+                                            <TableCell>Visit</TableCell>
+                                            <TableCell>Comments</TableCell>
+                                            <TableCell>Options</TableCell>
                                         </TableRow>
                                     </TableHead>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell>kobs1</TableCell>
-                                            <TableCell>kobs2</TableCell>
-                                            <TableCell>kobs3</TableCell>
-                                            <TableCell>kobs4</TableCell>
-                                            <TableCell>kobs5</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>kobs1</TableCell>
-                                            <TableCell>kobs2</TableCell>
-                                            <TableCell>kobs3</TableCell>
-                                            <TableCell>kobs4</TableCell>
-                                            <TableCell>kobs5</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                    <TableFooter>
+                                    {posts.length > 0 && <TableBody>
+                                        {posts.map(post => {
+                                            return (
+                                                <TableRow key={post.id}>
+                                                    <TableCell>
+                                                        <Avatar src={post.thumbnail}/>
+                                                    </TableCell>
+                                                    <TableCell>{post.title}</TableCell>
+                                                    <TableCell>{post.visits}</TableCell>
+                                                    <TableCell>{post.comments.length}</TableCell>
+                                                    <TableCell>
+                                                        <WarningIconButton>
+                                                            <FAIcon icon={faEdit} fontSize="sm"/>
+                                                        </WarningIconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        })}
+                                    </TableBody>}
+                                    {posts.length > 0 && <TableFooter>
                                         <TableRow>
                                             <TablePagination
                                                 count={10}
-                                                onPageChange={() => {}}
+                                                onPageChange={() => {
+                                                }}
                                                 page={1}
                                                 rowsPerPage={5}
-                                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                                rowsPerPageOptions={[5, 10, 25, {label: 'All', value: -1}]}
                                             />
                                         </TableRow>
-                                    </TableFooter>
+                                    </TableFooter>}
                                 </Table>
                             </TableContainer>
+                            {posts.length === 0 && <Alert variant="filled" severity="error">There is no post!</Alert> }
                         </CardContent>
                     </Card>
                 </Grid>
