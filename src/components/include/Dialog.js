@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,14 +7,13 @@ import {
 } from "@material-ui/core";
 
 import CustomButton from "../../adapters/CustomButton";
-import { ShowChart } from "@material-ui/icons";
 
 const CustomDialog = ({
   show,
   title,
   text,
   doneBtnText,
-  cansleBtnText,
+  cancelBtnText,
   handleClose,
   handleDone,
   children,
@@ -35,8 +33,8 @@ const CustomDialog = ({
         {children}
       </DialogContent>
       <DialogActions>
-        {cansleBtnText && (
-          <ErrorButton onClick={handleClose}>{cansleBtnText}</ErrorButton>
+        {cancelBtnText && (
+          <ErrorButton onClick={handleClose}>{cancelBtnText}</ErrorButton>
         )}
         {doneBtnText && (
           <PrimaryButton onClick={handleDone}>{doneBtnText}</PrimaryButton>
