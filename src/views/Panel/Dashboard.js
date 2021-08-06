@@ -34,7 +34,7 @@ const Dashboard = () => {
               <CardContent>
                 <Grid container>
                   <Grid item xs={12}>
-                    <img src={avatarImage} style={{ width: "100%" }} />
+                    <img src={avatarImage} style={{ width: "100%" }} alt="avatar"/>
                   </Grid>
                   <Grid item xs={12}>
                     <Box padding="0 0 0 0">
