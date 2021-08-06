@@ -1,12 +1,12 @@
 import React from "react";
-import {Switch, Route, useRouteMatch, Link} from "react-router-dom";
+import {Switch, Route, useRouteMatch} from "react-router-dom";
 import Dashboard from "./Dashboard";
 
 import Posts from './Posts'
 import Post from "./Post";
 
 const Index = () => {
-    let {path, url} = useRouteMatch();
+    let {path} = useRouteMatch();
 
     return (
         <React.Fragment>
