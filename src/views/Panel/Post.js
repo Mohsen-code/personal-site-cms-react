@@ -1,5 +1,5 @@
-import React, {useState, useRef} from "react";
-import {useHistory, useRouteMatch} from 'react-router-dom'
+import React, {useState, useRef, useEffect} from "react";
+import {useHistory, useRouteMatch, useParams} from 'react-router-dom'
 import {
     Container,
     Grid,
@@ -13,13 +13,24 @@ import {
     Typography, LinearProgress
 } from "@material-ui/core";
 import CustomButton from "../../adapters/CustomButton";
-import {Editor} from '@tinymce/tinymce-react';
 import noImage from '../../assets/images/no-image.jpg'
 import {PostDAO} from "../../DB/PostDAO";
 import useUtil from "../../hooks/util";
 import {PostDTO} from "../../adapters/PostDTO";
 import Dialog from '../../components/include/Dialog'
 import Message from "../../components/include/Message";
+
+// Require Editor JS files.
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+
+// Require Editor CSS files.
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+
+// Require Font Awesome.
+import '@fortawesome/fontawesome-free/css/fontawesome.css';
+
+import FroalaEditor from 'react-froala-wysiwyg';
 
 const useStyles = makeStyles({
     card: {
@@ -46,8 +57,23 @@ const Post = () => {
     const history = useHistory()
     const {path} = useRouteMatch()
     const util = useUtil()
+    const params = useParams();
+    const postId = params.id;
+    const editMode = !!params.id;
 
-    const editorRef = useRef(null);
+
+    const getPost = async (postId) => {
+        const post = await postDAO.getPost(postId);
+        setPost(post)
+        setTags(post.tags.join(','))
+    }
+
+    useEffect(() => {
+        if (editMode) {
+            getPost(postId)
+        }
+    }, [postId])
+
     const fileRef = useRef();
 
     const handleFileChooserChanges = event => {
@@ -77,46 +103,66 @@ const Post = () => {
         })
     }
 
+    const handleContentChanges = content => {
+        setPost(prevState => {
+            return {
+                ...prevState,
+                content: content
+            }
+        })
+    }
+
     const handleTagsChanges = event => {
         setTags(event.target.value)
     }
 
-    const handleCreateNewPost = () => {
-        if (editorRef.current) {
-            setShowDialog(true);
-            const splitTags = tags.split(',');
-            const content = editorRef.current.getContent()
-            setPost(prevState => {
-                return new PostDTO({
-                    ...prevState,
-                    content: content,
-                    tags: splitTags
-                })
-            })
-
-            postDAO.createPost(post)
-            setTimeout(() => {
-                setShowDialog(false);
-                setMessage(prevState => {
-                    return {
-                        ...prevState,
-                        show: true,
-                        messages: ['Post created'],
-                        status: "success"
-                    }
-                })
-                setTimeout(() => {
-                    history.push(`${util.routeParent(path)}/posts`)
-                }, 2000)
-            }, 2000)
-        }
+    const handleSetTags = event => {
+        const content = event.target.value.trim();
+        if (content.length > 0) setPost(prevState => {
+            return {
+                ...prevState,
+                tags: content.split(',')
+            }
+        })
     }
 
-    /*const resetForm = () => {
-        setPost(new PostDTO());
-        setTags("")
-        editorRef.current.resetContent("")
-    }*/
+    const handleCreateNewPost = () => {
+        setShowDialog(true);
+        postDAO.createPost(post)
+        setTimeout(() => {
+            setShowDialog(false);
+            setMessage(prevState => {
+                return {
+                    ...prevState,
+                    show: true,
+                    messages: ['Post created'],
+                    status: "success"
+                }
+            })
+            setTimeout(() => {
+                history.push(`${util.routeParent(path)}/posts`)
+            }, 2000)
+        }, 2000)
+    }
+
+    const handleUpdatePost = () => {
+        setShowDialog(true);
+        postDAO.updatePost(post)
+        setTimeout(() => {
+            setShowDialog(false);
+            setMessage(prevState => {
+                return {
+                    ...prevState,
+                    show: true,
+                    messages: ['Post updated successfully!'],
+                    status: "success"
+                }
+            })
+            setTimeout(() => {
+                history.push(`/panel/posts`)
+            }, 2000)
+        }, 2000)
+    }
 
     return (
         <Container>
@@ -157,24 +203,7 @@ const Post = () => {
                             </Box>
                             <Box margin="10px 0 0 0">
                                 <Typography variant="h6">Content: </Typography>
-                                <Editor
-                                    onInit={(evt, editor) => editorRef.current = editor}
-                                    initialValue=""
-                                    init={{
-                                        height: 500,
-                                        menubar: false,
-                                        plugins: [
-                                            'advlist autolink lists link image charmap print preview anchor',
-                                            'searchreplace visualblocks code fullscreen',
-                                            'insertdatetime media table paste code help wordcount'
-                                        ],
-                                        toolbar: 'undo redo | formatselect | ' +
-                                            'bold italic backcolor | alignleft aligncenter ' +
-                                            'alignright alignjustify | bullist numlist outdent indent | ' +
-                                            'removeformat | help',
-                                        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-                                    }}
-                                />
+                                <FroalaEditor tag='textarea' model={post.content} onModelChange={handleContentChanges}/>
                             </Box>
                             <Box margin="10px 0 0 0">
                                 <TextField
@@ -182,14 +211,17 @@ const Post = () => {
                                     fullWidth
                                     value={tags}
                                     onChange={handleTagsChanges}
+                                    onBlur={handleSetTags}
                                 />
                             </Box>
                         </CardContent>
                         <Divider/>
                         <CardActions style={{justifyContent: "space-between"}}>
-                            <PrimaryButton onClick={handleCreateNewPost}>Create</PrimaryButton>
+                            <PrimaryButton onClick={editMode ? handleUpdatePost : handleCreateNewPost}>
+                                {editMode ? 'Update' : 'Create'}
+                            </PrimaryButton>
                             <ErrorButton
-                                onClick={() => history.push(`${util.routeParent(path)}/posts`)}>Cancel</ErrorButton>
+                                onClick={() => history.push(`/panel/posts`)}>Cancel</ErrorButton>
                         </CardActions>
                     </Card>
                 </Grid>
