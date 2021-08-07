@@ -1,5 +1,5 @@
-import {v4 as uuid} from 'uuid'
-import {useState, useRef} from "react";
+import React, {useState, useRef} from "react";
+import {useHistory, useRouteMatch} from 'react-router-dom'
 import {
     Container,
     Grid,
@@ -10,37 +10,42 @@ import {
     Divider,
     TextField,
     makeStyles,
-    Typography
+    Typography, LinearProgress
 } from "@material-ui/core";
 import CustomButton from "../../adapters/CustomButton";
 import {Editor} from '@tinymce/tinymce-react';
 import noImage from '../../assets/images/no-image.jpg'
-import LocalStorage from "../../adapters/LocalStorage";
+import {PostDAO} from "../../DB/PostDAO";
+import useUtil from "../../hooks/util";
+import {PostDTO} from "../../adapters/PostDTO";
+import Dialog from '../../components/include/Dialog'
+import Message from "../../components/include/Message";
 
 const useStyles = makeStyles({
     card: {
         backgroundColor: "#292c31",
-        // position: 'absolute',
-        // top: '50%',
-        // left: '50%',
-        // transform: 'translate(-50%, -50%)',
-        // width: '93%'
     }
 })
 
-let ls = new LocalStorage("app-posts");
+const postDAO = new PostDAO();
+
+const PrimaryButton = new CustomButton('primary');
+const ErrorButton = new CustomButton('error');
 
 const Post = () => {
     const classes = useStyles();
-    const PrimaryButton = new CustomButton('primary');
-    const ErrorButton = new CustomButton('error');
-    const [editorState, setEditorState] = useState("");
-    const [thumbnail, setThumbnail] = useState(null)
-    const [title, setTitle] = useState("");
-    const [summary, setSummary] = useState("");
-    const [content, setContent] = useState("");
+    const [post, setPost] = useState(new PostDTO());
     const [tags, setTags] = useState("");
-
+    const [showDialog, setShowDialog] = useState(false);
+    const [message, setMessage] = useState({
+        show: false,
+        messages: [],
+        duration: 4000,
+        status: "error",
+    });
+    const history = useHistory()
+    const {path} = useRouteMatch()
+    const util = useUtil()
 
     const editorRef = useRef(null);
     const fileRef = useRef();
@@ -50,7 +55,9 @@ const Post = () => {
         const fileReader = new FileReader();
         fileReader.readAsDataURL(event.target.files[0])
         fileReader.onload = () => {
-            setThumbnail(fileReader.result)
+            setPost(prevState => {
+                return new PostDTO({...prevState, thumbnail: fileReader.result})
+            })
         }
     }
 
@@ -59,11 +66,15 @@ const Post = () => {
     }
 
     const handleTitleChanges = (event) => {
-        setTitle(event.target.value);
+        setPost(prevState => {
+            return new PostDTO({...prevState, title: event.target.value})
+        })
     }
 
     const handleSummaryChanges = event => {
-        setSummary(event.target.value);
+        setPost(prevState => {
+            return new PostDTO({...prevState, summary: event.target.value})
+        })
     }
 
     const handleTagsChanges = event => {
@@ -72,36 +83,55 @@ const Post = () => {
 
     const handleCreateNewPost = () => {
         if (editorRef.current) {
-            const post = {
-                id: uuid().replace(/-/g, ""),
-                thumbnail,
-                title,
-                summary,
-                content: editorRef.current.getContent(),
-                tags
-            }
+            setShowDialog(true);
+            const splitTags = tags.split(',');
+            const content = editorRef.current.getContent()
+            setPost(prevState => {
+                return new PostDTO({
+                    ...prevState,
+                    content: content,
+                    tags: splitTags
+                })
+            })
 
-            ls.addItem(post);
-            resetForm()
+            postDAO.createPost(post)
+            setTimeout(() => {
+                setShowDialog(false);
+                setMessage(prevState => {
+                    return {
+                        ...prevState,
+                        show: true,
+                        messages: ['Post created'],
+                        status: "success"
+                    }
+                })
+                setTimeout(() => {
+                    history.push(`${util.routeParent(path)}/posts`)
+                }, 2000)
+            }, 2000)
         }
     }
 
-    const resetForm = () => {
-        setThumbnail(null)
-        setTitle("")
-        setSummary("")
+    /*const resetForm = () => {
+        setPost(new PostDTO());
         setTags("")
         editorRef.current.resetContent("")
-    }
+    }*/
 
     return (
         <Container>
+            <Dialog
+                show={showDialog}
+                handleClose={() => setShowDialog(false)}
+                title="Please Wait">
+                <LinearProgress/>
+            </Dialog>
             <Grid container>
                 <Grid item xs={12}>
                     <Card className={classes.card}>
                         <CardContent>
                             <Box>
-                                <img src={thumbnail ? thumbnail : noImage} style={{width: '100%'}}/>
+                                <img src={post.thumbnail || noImage} style={{width: '100%'}} alt="thumbnail"/>
                             </Box>
                             <Box margin="10px 0">
                                 <input type="file" ref={fileRef} onChange={handleFileChooserChanges} hidden/>
@@ -111,7 +141,7 @@ const Post = () => {
                                 <TextField
                                     label="Title"
                                     fullWidth
-                                    value={title}
+                                    value={post.title}
                                     onChange={handleTitleChanges}
                                 />
                             </Box>
@@ -121,7 +151,7 @@ const Post = () => {
                                     fullWidth
                                     multiline
                                     rows={5}
-                                    value={summary}
+                                    value={post.summary}
                                     onChange={handleSummaryChanges}
                                 />
                             </Box>
@@ -158,11 +188,24 @@ const Post = () => {
                         <Divider/>
                         <CardActions style={{justifyContent: "space-between"}}>
                             <PrimaryButton onClick={handleCreateNewPost}>Create</PrimaryButton>
-                            <ErrorButton>Cancel</ErrorButton>
+                            <ErrorButton
+                                onClick={() => history.push(`${util.routeParent(path)}/posts`)}>Cancel</ErrorButton>
                         </CardActions>
                     </Card>
                 </Grid>
             </Grid>
+            <Message
+                show={message.show}
+                onClose={() => {
+                    setMessage(prevState => {
+                        return {...prevState, show: false}
+                    })
+                }
+                }
+                messages={message.messages}
+                duration={message.duration}
+                status={message.status}
+            />
         </Container>
     )
 }
