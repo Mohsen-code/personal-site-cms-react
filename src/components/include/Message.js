@@ -6,7 +6,7 @@ const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const Message = ({ messages, status, duration = 4000 }) => {
+const Message = ({ show, onClose, messages, status, duration = 4000 }) => {
   const [open, setOpen] = useState(true);
   return (
     <Snackbar
@@ -14,9 +14,9 @@ const Message = ({ messages, status, duration = 4000 }) => {
         vertical: "bottom",
         horizontal: "center",
       }}
-      open={open}
+      open={show}
       autoHideDuration={duration}
-      onClose={() => setOpen(false)}
+      onClose={onClose}
     >
       <Alert onClose={() => setOpen(false)} severity={status}>
         {messages.join("\n")}
