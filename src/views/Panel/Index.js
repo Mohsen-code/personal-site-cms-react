@@ -20,6 +20,9 @@ const Index = () => {
                 <Route path={`${path}/new-post`}>
                     <Post/>
                 </Route>
+                <Route path={`${path}/edit-post/:id`}>
+                    <Post/>
+                </Route>
             </Switch>
         </React.Fragment>
     );
