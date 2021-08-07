@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
         bottom: "0",
         left: "0",
         width: "100%",
+        zIndex: 3
     },
     appBar: {
         // width: '100vw'
