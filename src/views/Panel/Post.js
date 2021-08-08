@@ -10,7 +10,7 @@ import {
     Divider,
     TextField,
     makeStyles,
-    Typography, LinearProgress
+    Typography, LinearProgress, InputLabel, Select, FormControl, MenuItem, Checkbox, ListItemText, Input
 } from "@material-ui/core";
 import CustomButton from "../../adapters/CustomButton";
 import noImage from '../../assets/images/no-image.jpg'
@@ -31,23 +31,44 @@ import 'froala-editor/css/froala_editor.pkgd.min.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
 import FroalaEditor from 'react-froala-wysiwyg';
+import {CategoryDAO} from "../../DB/CategoryDAO";
+import {CategoryDTO} from "../../adapters/CategoryDTO";
+import CustomCheckbox from "../../adapters/CustomCheckbox";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     card: {
         backgroundColor: "#292c31",
+    },
+    formControl: {
+        width: '100%'
     }
-})
+}))
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 const postDAO = new PostDAO();
+const categoryDAO = new CategoryDAO();
 
 const PrimaryButton = new CustomButton('primary');
 const ErrorButton = new CustomButton('error');
+const PrimaryCheckbox = new CustomCheckbox('primary');
 
 const Post = () => {
     const classes = useStyles();
     const [post, setPost] = useState(new PostDTO());
     const [tags, setTags] = useState("");
     const [showDialog, setShowDialog] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [message, setMessage] = useState({
         show: false,
         messages: [],
@@ -60,6 +81,7 @@ const Post = () => {
     const params = useParams();
     const postId = params.id;
     const editMode = !!params.id;
+    const fileRef = useRef();
 
 
     const getPost = async (postId) => {
@@ -69,12 +91,26 @@ const Post = () => {
     }
 
     useEffect(() => {
+        categoryDAO.getCategories().then(categories => {
+            const mappedCategories = categories.map(category => new CategoryDTO(category))
+            setCategories(mappedCategories)
+        })
+    }, [])
+
+    useEffect(() => {
         if (editMode) {
             getPost(postId)
         }
     }, [postId])
 
-    const fileRef = useRef();
+    useEffect(() => {
+        if (editMode) {
+            const categoriesTitle = util.mapSpecificDataFromArray(post.categories, categories, 'id', 'title');
+            setSelectedCategories(categoriesTitle)
+        }
+    }, [categories])
+
+
 
     const handleFileChooserChanges = event => {
         if (!event.target.files) return;
@@ -122,6 +158,20 @@ const Post = () => {
             return {
                 ...prevState,
                 tags: content.split(',')
+            }
+        })
+    }
+
+    const selectedCategoriesChanged = (event) => {
+        setSelectedCategories(event.target.value)
+    };
+
+    const handleSetCategoriesToPostObject = () => {
+        const categoriesId = util.mapSpecificDataFromArray(selectedCategories, categories, 'title', 'id');
+        setPost(prevState => {
+            return {
+                ...prevState,
+                categories: categoriesId
             }
         })
     }
@@ -190,6 +240,31 @@ const Post = () => {
                                     value={post.title}
                                     onChange={handleTitleChanges}
                                 />
+                            </Box>
+                            <Box margin="10px 0 0 0">
+                                <FormControl className={classes.formControl}>
+                                    <InputLabel id="categories-label">Category</InputLabel>
+                                    <Select
+                                        labelId="categories-label"
+                                        id="multiple-category"
+                                        multiple
+                                        value={selectedCategories}
+                                        onChange={selectedCategoriesChanged}
+                                        onBlur={handleSetCategoriesToPostObject}
+                                        input={<Input/>}
+                                        renderValue={(selected) => selected.join(', ')}
+                                        MenuProps={MenuProps}
+                                        fullWidth
+                                    >
+                                        {categories.map((category) => (
+                                            <MenuItem key={category.id} value={category.title}>
+                                                <PrimaryCheckbox
+                                                    checked={selectedCategories.indexOf(category.title) > -1}/>
+                                                <ListItemText primary={category.title}/>
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             </Box>
                             <Box margin="10px 0 0 0">
                                 <TextField
