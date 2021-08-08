@@ -4,6 +4,8 @@ import Dashboard from "./Dashboard";
 
 import Posts from './Posts'
 import Post from "./Post";
+import {Categories} from "./Categories";
+import Category from "./Category";
 
 const Index = () => {
     let {path} = useRouteMatch();
@@ -22,6 +24,15 @@ const Index = () => {
                 </Route>
                 <Route path={`${path}/edit-post/:id`}>
                     <Post/>
+                </Route>
+                <Route path={`${path}/categories`}>
+                    <Categories/>
+                </Route>
+                <Route path={`${path}/new-category`}>
+                    <Category/>
+                </Route>
+                <Route path={`${path}/edit-category/:id`}>
+                    <Category/>
                 </Route>
             </Switch>
         </React.Fragment>
