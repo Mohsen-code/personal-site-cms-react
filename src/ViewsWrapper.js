@@ -24,7 +24,7 @@ import LanguageIcon from "@material-ui/icons/Language";
 import ColorPaletteIcon from "@material-ui/icons/Palette";
 import EmailIcon from "@material-ui/icons/Email";
 import FAIcon from "./components/include/FontAwesomeIcon";
-import {faHome, faUser, faThLarge, faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faHome, faUser, faThLarge, faEdit, faSitemap} from "@fortawesome/free-solid-svg-icons";
 import {faBloggerB} from "@fortawesome/free-brands-svg-icons";
 import avatar from './assets/images/5.jpg'
 
@@ -164,6 +164,14 @@ const ViewsWrapper = ({children}) => {
                         </ListItemIcon>
                         <ListItemText>
                             <Typography variant="h6">Posts</Typography>
+                        </ListItemText>
+                    </ListItem>
+                    <ListItem button onClick={() => handleDrawerMenuClick('panel/categories')}>
+                        <ListItemIcon>
+                            <FAIcon icon={faSitemap} fontSize="lg"/>
+                        </ListItemIcon>
+                        <ListItemText>
+                            <Typography variant="h6">Categories</Typography>
                         </ListItemText>
                     </ListItem>
                 </List>
