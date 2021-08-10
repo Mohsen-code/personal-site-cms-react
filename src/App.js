@@ -6,6 +6,7 @@ import Blog from "./views/Blog";
 import Login from "./views/Login";
 import Register from "./views/Register";
 import Panel from "./views/Panel/Index";
+import {Post} from "./views/Post";
 
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import ViewsWrapper from "./ViewsWrapper";
@@ -45,6 +46,9 @@ function App() {
             </Route>
             <Route path="/blog" exact>
               <Blog />
+            </Route>
+            <Route path="/post/:id" exact>
+              <Post />
             </Route>
             <Route path="/login" exact>
               <Login />
