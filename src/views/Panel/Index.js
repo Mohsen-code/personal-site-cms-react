@@ -6,6 +6,7 @@ import Posts from './Posts'
 import Post from "./Post";
 import {Categories} from "./Categories";
 import Category from "./Category";
+import {Comments} from "./Comments";
 
 const Index = () => {
     let {path} = useRouteMatch();
@@ -33,6 +34,9 @@ const Index = () => {
                 </Route>
                 <Route path={`${path}/edit-category/:id`}>
                     <Category/>
+                </Route>
+                <Route path={`${path}/comments`}>
+                    <Comments/>
                 </Route>
             </Switch>
         </React.Fragment>
