@@ -6,4 +6,11 @@ export class CommentDTO {
     name = "";
     email = ""
     content = ""
+    isPublic = false
+    replyId = null
+    userId = null
+
+    constructor(init) {
+        if (init) Object.assign(init)
+    }
 }
