@@ -24,7 +24,7 @@ import LanguageIcon from "@material-ui/icons/Language";
 import ColorPaletteIcon from "@material-ui/icons/Palette";
 import EmailIcon from "@material-ui/icons/Email";
 import FAIcon from "./components/include/FontAwesomeIcon";
-import {faHome, faUser, faThLarge, faEdit, faSitemap} from "@fortawesome/free-solid-svg-icons";
+import {faHome, faUser, faThLarge, faEdit, faSitemap, faComments} from "@fortawesome/free-solid-svg-icons";
 import {faBloggerB} from "@fortawesome/free-brands-svg-icons";
 import avatar from './assets/images/5.jpg'
 
@@ -172,6 +172,14 @@ const ViewsWrapper = ({children}) => {
                         </ListItemIcon>
                         <ListItemText>
                             <Typography variant="h6">Categories</Typography>
+                        </ListItemText>
+                    </ListItem>
+                    <ListItem button onClick={() => handleDrawerMenuClick('panel/comments')}>
+                        <ListItemIcon>
+                            <FAIcon icon={faComments} fontSize="lg"/>
+                        </ListItemIcon>
+                        <ListItemText>
+                            <Typography variant="h6">Comments</Typography>
                         </ListItemText>
                     </ListItem>
                 </List>
