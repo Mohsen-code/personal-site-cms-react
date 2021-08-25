@@ -80,10 +80,12 @@ const ViewsWrapper = ({children}) => {
             case "/":
                 setValue("Home");
                 break;
-            case "/login":
             case "/register":
-            case "/panel":
+            case "/login":
                 setValue("Login");
+                break;
+            case "/panel":
+                setValue("Panel");
                 break;
             case "/blog":
                 setValue("Blog");
@@ -105,6 +107,9 @@ const ViewsWrapper = ({children}) => {
                 break;
             case "Blog":
                 history.push("/blog");
+                break;
+            case "Panel":
+                history.push("/panel");
                 break;
             default:
                 console.log("hey");
@@ -263,11 +268,16 @@ const ViewsWrapper = ({children}) => {
                 onChange={handleBottomNavigation}
                 className={classes.root}
             >
-                <CustomBottomNavigationAction
+                {ctx.isUserLoggedIn && <CustomBottomNavigationAction
+                    label={userIconLabel}
+                    value="Panel"
+                    icon={<FAIcon icon={faThLarge} fontSize="lg"/>}
+                />}
+                {!ctx.isUserLoggedIn && <CustomBottomNavigationAction
                     label={userIconLabel}
                     value="Login"
                     icon={<FAIcon icon={faUser} fontSize="lg"/>}
-                />
+                />}
                 <CustomBottomNavigationAction
                     label="Home"
                     value="Home"
