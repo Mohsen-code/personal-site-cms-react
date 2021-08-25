@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {
     Grid,
     Box,
@@ -27,7 +27,11 @@ import Dialog from "../../include/Dialog";
 import CustomButton from "../../../adapters/CustomButton";
 import CustomIconButton from "../../../adapters/CustomIconButton";
 import CustomCheckbox from "../../../adapters/CustomCheckbox";
-import TodoListAdapter from "../../../adapters/TodoList";
+import {TodoDTO} from "../../../adapters/TodoDTO";
+import {TodoDAO} from "../../../DB/TodoDAO";
+import Message from "../../include/Message";
+
+const todoDAO = new TodoDAO();
 
 const useStyles = makeStyles({
     root: {
@@ -57,13 +61,26 @@ const PrimarySwitch = withStyles({
     track: {},
 })(Switch);
 
+const PrimaryButton = new CustomButton("primary");
+const WarningIconButton = new CustomIconButton("warning");
+const PrimaryCheckbox = new CustomCheckbox("primary");
+
+/*
+* TODO: Working on create todo!
+* */
+
+
 const TodoList = () => {
     const classes = useStyles();
     const [editMode, setEditMode] = useState(false);
-    const [currentTodoId, setCurrentTodoId] = useState("");
-    const [todoTitleDefaultValue, setTodoTitleDefaultValue] = useState("");
-    const [todoDescriptionDefaultValue, setTodoDescriptionDefaultValue] = useState("");
-    const [todoIsDoneDefaultValue, setTodoIsDoneDefaultValue] = useState(false);
+    const [todos, setTodos] = useState([])
+    const [todo, setTodo] = useState(new TodoDTO())
+    const [message, setMessage] = useState({
+        show: false,
+        messages: [],
+        duration: 4000,
+        status: "error",
+    });
     const {
         register,
         handleSubmit,
@@ -71,9 +88,16 @@ const TodoList = () => {
         formState: {errors},
     } = useForm();
 
-    const PrimaryButton = new CustomButton("primary");
-    const WarningIconButton = new CustomIconButton("warning");
-    const PrimaryCheckbox = new CustomCheckbox("primary");
+
+    const getTodosByIsDone = useCallback(async (todoMode) => {
+        const todosList = await todoDAO.getTodosByIsDone(todoMode)
+        console.log('todosList => ', todosList)
+        setTodos(todosList.map(todo => new TodoDTO(todo)))
+    }, [])
+
+    useEffect(() => {
+        getTodosByIsDone(false);
+    }, [getTodosByIsDone])
 
     const handleFormSubmission = (data) => {
         console.log('data => ', data)
@@ -86,123 +110,142 @@ const TodoList = () => {
     }
     const handleNewTodo = (data) => {
         const {title, description} = data;
-        todos.newTodo(title, description);
+        setTodo(prevState => {
+            return {
+                ...prevState,
+                title,
+                description
+            }
+        }, () => {
+            // todoDAO.createTodo(todo)
+            console.log('todo is => ', todo)
+            setTodos(prevState => {
+                return [...prevState, todo]
+            })
+        })
+
+        setMessage(prevState => {
+            return {
+                ...prevState,
+                show: true,
+                status: 'success',
+                messages: ['todo added successfully']
+            }
+        })
         setShowDialog(false);
+        setTodo(new TodoDTO())
         reset()
     }
 
     const handleUpdateTodo = (data) => {
-        const updatedData = {...data, id: currentTodoId, isDone: todoIsDoneDefaultValue}
-        todos.updateTodo(updatedData)
+
         setShowDialog(false);
         reset()
     }
 
     const handleAddNewTodoClickBtn = () => {
         setEditMode(false)
-        setCurrentTodoId("")
-        setTodoTitleDefaultValue("")
-        setTodoDescriptionDefaultValue("")
-        setTodoIsDoneDefaultValue(false)
         setShowDialog(true)
     }
 
     const handleClickOnEditTodo = (todoItem) => {
         setEditMode(true)
-        setCurrentTodoId(todoItem.id)
-        setTodoTitleDefaultValue(todoItem.title)
-        setTodoDescriptionDefaultValue(todoItem.description)
-        setTodoIsDoneDefaultValue(todoItem.isDone)
         setShowDialog(true)
     }
 
-    const todos = new TodoListAdapter();
-    const todosItems = todos.getTodos("unFinished");
-
-    const jsxTodosItems = todosItems.map(todoItem => {
-        return (
-            <React.Fragment key={todoItem.id}>
-                <ListItem button>
-                    <ListItemIcon>
-                        <PrimaryCheckbox edge="start"/>
-                    </ListItemIcon>
-                    <ListItemText>{todoItem.title}</ListItemText>
-                    <ListItemSecondaryAction>
-                        <WarningIconButton onClick={() => handleClickOnEditTodo(todoItem)}>
-                            <FAIcon icon={faEdit} fontSize="sm"/>
-                        </WarningIconButton>
-                    </ListItemSecondaryAction>
-                </ListItem>
-                <Divider/>
-            </React.Fragment>
-        )
-    })
+    // const todos = new TodoListAdapter();
+    // const todosItems = todos.getTodos("unFinished");
 
     const [showDialog, setShowDialog] = useState(false);
 
     return (
         <React.Fragment>
-            {
-                <Dialog
-                    cancelBtnText="close"
-                    show={showDialog}
-                    handleClose={() => setShowDialog(false)}
-                    doneBtnText={editMode ? "update" : "add"}
-                    handleDone={handleSubmit(handleFormSubmission)}
-                    title="Add Todo"
-                >
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <Box margin="0 0 10px 0">
-                                <TextField
-                                    label="Title"
-                                    type="text"
-                                    fullWidth
-                                    defaultValue={todoTitleDefaultValue}
-                                    {...register("title", {
-                                        required: {
-                                            value: true,
-                                            message: "Please enter your email",
-                                        },
-                                        minLength: {
-                                            value: 3,
-                                            message: "Title must be at least 3 characters"
-                                        }
-                                    })}
-                                    error={errors.title ? true : false}
-                                    helperText={(errors.title && errors.title.message) || ""}
-                                />
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Box>
-                                <TextField
-                                    label="Description"
-                                    type="text"
-                                    rows={4}
-                                    multiline
-                                    fullWidth
-                                    defaultValue={todoDescriptionDefaultValue}
-                                    {...register("description", {
-                                        required: false
-                                    })}
-                                />
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Box margin="15px 0 0 0">
-                                <FormControlLabel control={
-                                    <PrimarySwitch
-                                        checked={todoIsDoneDefaultValue}
-                                        onChange={() => setTodoIsDoneDefaultValue(prevData => !prevData)}
-                                    />
-                                }
-                                                  label="is finished?"/>
-                            </Box>
-                        </Grid>
+            <Message
+                show={message.show}
+                onClose={() => {
+                    setMessage(prevState => {
+                        return {...prevState, show: false}
+                    })
+                }
+                }
+                messages={message.messages}
+                duration={message.duration}
+                status={message.status}
+            />
+            <Dialog
+                cancelBtnText="close"
+                show={showDialog}
+                handleClose={() => setShowDialog(false)}
+                doneBtnText={editMode ? "update" : "add"}
+                handleDone={handleSubmit(handleFormSubmission)}
+                title="Add Todo"
+            >
+                <Grid container>
+                    <Grid item xs={12}>
+                        <Box margin="0 0 10px 0">
+                            <TextField
+                                label="Title"
+                                type="text"
+                                fullWidth
+                                defaultValue={todo.title}
+                                {...register("title", {
+                                    required: {
+                                        value: true,
+                                        message: "Please enter your email",
+                                    },
+                                    minLength: {
+                                        value: 3,
+                                        message: "Title must be at least 3 characters"
+                                    }
+                                })}
+                                error={errors.title ? true : false}
+                                helperText={(errors.title && errors.title.message) || ""}
+                            />
+                        </Box>
                     </Grid>
-                </Dialog>
-            }
+                    <Grid item xs={12}>
+                        <Box>
+                            <TextField
+                                label="Description"
+                                type="text"
+                                rows={4}
+                                multiline
+                                fullWidth
+                                defaultValue={todo.description}
+                                {...register("description", {
+                                    required: false
+                                })}
+                            />
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Box margin="15px 0 0 0">
+                            <FormControlLabel control={
+                                <PrimarySwitch
+                                    checked={todo.isDone}
+                                    onChange={() => setTodo(prevState => {
+                                        return {...prevState, isDone: !prevState.isDone}
+                                    })}
+                                />
+                            }
+                                              label="is done?"/>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Box margin="15px 0 0 0">
+                            <FormControlLabel control={
+                                <PrimarySwitch
+                                    checked={todo.isImportant}
+                                    onChange={() => setTodo(prevState => {
+                                        return {...prevState, isImportant: !prevState.isImportant}
+                                    })}
+                                />
+                            }
+                                              label="is important?"/>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Dialog>
             <Card className={classes.root}>
                 <CardActions className={classes.cardAction}>
                     <Typography variant="h5">Todo List</Typography>
@@ -210,12 +253,29 @@ const TodoList = () => {
                         Add Item
                     </PrimaryButton>
                 </CardActions>
-                {jsxTodosItems.length === 0 && <Box padding="10px">
+                {todos.length === 0 && <Box padding="10px">
                     <Typography variant="h6" color="error">There is no todo for show!</Typography>
                 </Box>}
-                {jsxTodosItems.length > 0 && <CardContent>
+                {todos.length > 0 && <CardContent>
                     <List>
-                        {jsxTodosItems}
+                        {todos.map(todoItem => {
+                            return (
+                                <React.Fragment key={todoItem.id}>
+                                    <ListItem button>
+                                        <ListItemIcon>
+                                            <PrimaryCheckbox edge="start"/>
+                                        </ListItemIcon>
+                                        <ListItemText>{todoItem.title}</ListItemText>
+                                        <ListItemSecondaryAction>
+                                            <WarningIconButton onClick={() => handleClickOnEditTodo(todoItem)}>
+                                                <FAIcon icon={faEdit} fontSize="sm"/>
+                                            </WarningIconButton>
+                                        </ListItemSecondaryAction>
+                                    </ListItem>
+                                    <Divider/>
+                                </React.Fragment>
+                            )
+                        })}
                     </List>
                 </CardContent>}
             </Card>
