@@ -20,6 +20,7 @@ import Message from "../components/include/Message";
 import classes from '../styles/login.module.scss'
 import {AccountDAO} from "../DB/AccountDAO";
 import AppContext from "../store/app-context";
+import {AccountDTO} from "../adapters/AccountDTO";
 const accountDAO = new AccountDAO();
 
 
@@ -53,7 +54,8 @@ const Login = () => {
         let messageProp = "";
         let hasError = false;
         if (user && user.password === data.password) {
-
+            ctx.setAccount(new AccountDTO(user))
+            ctx.setIsUserLoggedIn(true);
             const userData = new LocalStorage("app-user-data");
             const expireDate = Math.ceil(new Date().getTime() * 5 * 60 * 60)
             userData.saveUserData({

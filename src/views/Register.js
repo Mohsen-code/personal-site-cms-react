@@ -70,6 +70,7 @@ const Register = () => {
             messageProp = "You have bee registered successfully!";
             reset();
             ctx.setIsUserLoggedIn(true);
+            ctx.setAccount(account)
             setTimeout(() => {
                 history.push('/panel')
             }, message.duration)
