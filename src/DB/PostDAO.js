@@ -21,4 +21,8 @@ export class PostDAO {
     async getPosts() {
         return db.posts.toArray();
     }
+
+    async getPostsCount() {
+        return await db.posts.count();
+    }
 }
