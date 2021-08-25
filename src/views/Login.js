@@ -83,6 +83,12 @@ const Login = () => {
         });
     };
 
+    const handlePasswordKeyPress = event => {
+        if (event.code === "Enter"){
+            handleSubmit(handleLoginBtnClick)(event)
+        }
+    }
+
     return (
         <React.Fragment>
             <Message
@@ -151,6 +157,7 @@ const Login = () => {
                                         </InputAdornment>
                                     ),
                                 }}
+                                onKeyPress={handlePasswordKeyPress}
                             />
                         </Box>
                     </form>
