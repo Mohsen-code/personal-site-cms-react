@@ -13,12 +13,12 @@ export class TodoDAO {
         db.todos.delete(todoId)
     }
 
-    async getTodosByIsDone(isDone){
-        return db.todos.toCollection().filter(todo => todo.isDone === isDone);
+    async getTodosByIsDone(isDone = false){
+        return db.todos.toCollection().filter(todo => todo.isDone === isDone).toArray();
     }
 
     async getTodosByIsImportant(isImportant){
-        return db.todos.toCollection().filter(todo => todo.isImportant === isImportant);
+        return db.todos.toCollection().filter(todo => todo.isImportant === isImportant).toArray();
     }
 
     async getTodoById(todoId){
