@@ -22,4 +22,7 @@ export class CommentDAO{
         return db.comments.toCollection().filter(comment => comment.isPublic === isPublic).toArray();
     }
 
+    async getCommentsCount() {
+        return await db.comments.count();
+    }
 }
