@@ -26,6 +26,7 @@ const CustomDialog = ({
       open={show}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
+      fullWidth
     >
       {title && <DialogTitle id="form-dialog-title">{title}</DialogTitle>}
       <DialogContent>

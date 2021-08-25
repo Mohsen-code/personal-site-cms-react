@@ -14,7 +14,6 @@ const ImageSlider = ({ images = [], height = 210 }) => {
               <img
                 src={images[index].src}
                 alt=""
-                style={{ width: "100%", height: `${height}px` }}
               />
             </figure>
             <figcaption>

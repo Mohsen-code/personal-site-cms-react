@@ -13,7 +13,7 @@ const useStyle = makeStyles({
     },
     card: {
         backgroundColor: "#292c31",
-        margin: '0 0 15px 0'
+        margin: '0 7px 15px 7px'
     },
 
     postImage: {
@@ -42,10 +42,10 @@ const Blog = () => {
             <Grid container>
                 {posts.map(post => {
                     return (
-                        <Grid item xs={12} key={post.id}>
+                        <Grid item xs={12} md={6} lg={4} key={post.id}>
                             <Card className={classes.card}>
                                 <CardContent>
-                                    <img src={post.thumbnail} className={classes.postImage}/>
+                                    <img src={post.thumbnail} className={classes.postImage} alt={'thumbnail'}/>
                                     <Typography variant="h4" component="h1">
                                         {post.title}
                                     </Typography>

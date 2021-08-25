@@ -1,16 +1,19 @@
 import {useParams} from 'react-router-dom';
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {Container, Grid, Box, Card, makeStyles, Typography} from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert';
 import {PostDAO} from "../DB/PostDAO";
 import {PostDTO} from "../adapters/PostDTO";
 import defaultImage from '../assets/images/no-image.jpg'
 import {Comment} from "../components/Blog/Comment";
-import {ShowComment} from "../components/Blog/ShowComment";
+import ShowComment from "../components/include/ShowComment";
 import {CommentDAO} from "../DB/CommentDAO";
 import Message from "../components/include/Message";
+import CustomButton from "../adapters/CustomButton";
 
 const postDAO = new PostDAO();
 const commentDAO = new CommentDAO();
+const PrimaryButton = new CustomButton('primary');
 
 const useStyle = makeStyles({
     container: {
@@ -32,7 +35,10 @@ const useStyle = makeStyles({
 export const Post = () => {
     const classes = useStyle();
     const [post, setPost] = useState(new PostDTO());
-    const [comments, setComments] = useState([])
+    const [userWantToReply, setUserWantToReply] = useState(false)
+    const [replyCommentId, setReplyCommentId] = useState(null);
+    const [replyCommentName, setReplyCommentName] = useState(null);
+    const [commentsTrees, setCommentsTrees] = useState([])
     const [message, setMessage] = useState({
         show: false,
         messages: [],
@@ -42,16 +48,38 @@ export const Post = () => {
     const params = useParams();
     const postId = params.id;
 
-    const getPost = async () => {
+    const getPost = useCallback(async () => {
         const post = await postDAO.getPost(postId)
         setPost(new PostDTO(post))
-    }
+    }, [])
 
-    const getComments = async () => {
+    // Start Show Comments Functionality
+    const getComment = useCallback(async (commentId) => {
+        return await commentDAO.getComment(commentId)
+    }, [])
+
+    const createCommentsTree = useCallback(async (commentObject) => {
+        commentObject.reply = await getComment(commentObject.replyId);
+        if (commentObject.reply.isPublic && commentObject.reply.replyId) await createCommentsTree(commentObject.reply);
+    }, [getComment])
+
+    const initComments = useCallback(async (commentId) => {
+        const comment = await getComment(commentId);
+        if (comment.isPublic && comment.replyId) await createCommentsTree(comment);
+        return comment;
+    }, [getComment, createCommentsTree])
+    // End Show Comments Functionality
+
+    const getComments = useCallback(async () => {
         const comments = await commentDAO.getComments(true)
-        console.log('comments => ', comments)
-        setComments(comments)
-    }
+        const filteredComments = comments.filter(comment => comment.parentId === null)
+        for (let i = 0; i < filteredComments.length; i++){
+            const tree = await initComments(filteredComments[i].id)
+            setCommentsTrees(prevState => {
+                return [...prevState, tree]
+            })
+        }
+    }, [])
 
     useEffect(() => {
         getPost();
@@ -61,7 +89,20 @@ export const Post = () => {
         getComments();
     }, [])
 
-    const handleCreateComment = (comment) => {
+
+    const handleReplyButtonOnClick = (commentID, commentName = null) => {
+        setUserWantToReply(true);
+        setReplyCommentId(commentID)
+        setReplyCommentName(commentName)
+    }
+
+    const handleCreateComment = async (comment) => {
+        if (replyCommentId) {
+            comment.parentId = replyCommentId;
+            const parentComment = await getComment(replyCommentId);
+            parentComment.replyId = comment.id;
+            commentDAO.updateComment(parentComment);
+        }
         commentDAO.createComment(comment)
         setMessage(prevState => {
             return {
@@ -71,7 +112,13 @@ export const Post = () => {
                 messages: ['Comment send successfully!']
             }
         })
-        getComments();
+    }
+
+
+    const handleCancelReplyClickButton = () => {
+        setUserWantToReply(false);
+        setReplyCommentId(null)
+        setReplyCommentName(null)
     }
 
     return (
@@ -105,14 +152,20 @@ export const Post = () => {
                     </Card>
                 </Grid>
                 <Grid item xs={12}>
-                    <Comment postId={postId} createComment={handleCreateComment}/>
+                    {commentsTrees.map(comment => {
+                        return (<ShowComment key={comment.id} comment={comment} replyButtonOnClick={handleReplyButtonOnClick}/>)
+                    })}
                 </Grid>
 
                 <Grid item xs={12}>
-                    {comments.map(comment => {
-                        return (<ShowComment key={comment.id} comment={comment}/>)
-                    })}
+                    {replyCommentName && <Alert variant="filled" severity="info" action={
+                        <PrimaryButton onClick={handleCancelReplyClickButton}>cancel</PrimaryButton>
+                    }>
+                        You're answering to <strong>{replyCommentName}</strong>
+                    </Alert>}
+                    <Comment postId={postId} createComment={handleCreateComment}/>
                 </Grid>
+
             </Grid>
         </Container>
     )

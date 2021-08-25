@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {useHistory} from "react-router";
+import React, {useState, useContext} from "react";
+import {useHistory} from "react-router-dom";
 import {
     TextField,
     Card,
@@ -7,7 +7,6 @@ import {
     CardActions,
     Button,
     Divider,
-    makeStyles,
     Box,
     Typography,
     InputAdornment,
@@ -18,22 +17,13 @@ import FAIcon from "../components/include/FontAwesomeIcon";
 import {useForm} from "react-hook-form";
 import LocalStorage from "../adapters/LocalStorage";
 import Message from "../components/include/Message";
+import classes from '../styles/login.module.scss'
+import {AccountDAO} from "../DB/AccountDAO";
+import AppContext from "../store/app-context";
+const accountDAO = new AccountDAO();
 
-const useStyles = makeStyles({
-    root: {
-        backgroundColor: "#292c31",
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "90%",
-    },
-});
-
-const ls = new LocalStorage("app-users");
 
 const Login = () => {
-    const classes = useStyles();
     const [showPassword, setShowPassword] = useState(false);
     const history = useHistory();
     const {
@@ -48,6 +38,8 @@ const Login = () => {
         status: "error",
     });
 
+    const ctx = useContext(AppContext)
+
     const handleSubmitForm = (event) => {
         event.preventDefault();
     };
@@ -56,20 +48,27 @@ const Login = () => {
         setShowPassword((prevVal) => !prevVal);
     };
 
-    const handleLoginBtnClick = (data) => {
-        const user = ls.getUserByEmail(data.email);
-        let messagesss = "Email or password is wrong!";
-        let hasError = true;
+    const handleLoginBtnClick = async (data) => {
+        const user = await accountDAO.getAccountByEmail(data.email);
+        let messageProp = "";
+        let hasError = false;
         if (user && user.password === data.password) {
+
             const userData = new LocalStorage("app-user-data");
+            const expireDate = Math.ceil(new Date().getTime() * 5 * 60 * 60)
             userData.saveUserData({
                 id: user.id,
-                permission: user.permision,
+                permission: user.permission,
                 userName: user.firstName + " " + user.lastName,
+                expireDate: expireDate
             });
-
-            messagesss = "Welcome back babe :D";
-            hasError = false;
+            messageProp = "Welcome back babe :D";
+            setTimeout(() => {
+                history.push('/panel')
+            }, message.duration)
+        }else{
+            messageProp = "Email or password is wrong!";
+            hasError = true;
         }
 
         setMessage((prevData) => {
@@ -77,22 +76,9 @@ const Login = () => {
                 ...prevData,
                 show: true,
                 status: hasError ? "error" : "success",
-                messages: [messagesss],
+                messages: [messageProp],
             };
         });
-
-        setTimeout(() => {
-            setMessage((prevData) => {
-                return {
-                    ...prevData,
-                    show: false,
-                    status: "error",
-                    messages: [],
-                };
-            });
-        }, message.duration + 100);
-
-        console.log("user is not valid!");
     };
 
     return (
@@ -109,7 +95,7 @@ const Login = () => {
                 duration={message.duration}
                 status={message.status}
             />
-            <Card className={classes.root}>
+            <Card className={classes['login-form']}>
                 <CardContent>
                     <Typography variant="h5">Login Form</Typography>
                     <form action="#" onSubmit={handleSubmitForm}>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Snackbar } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 
@@ -6,8 +5,7 @@ const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const Message = ({ show, onClose, messages, status, duration = 4000 }) => {
-  const [open, setOpen] = useState(true);
+const Message = ({ show, onClose, messages, status, duration }) => {
   return (
     <Snackbar
       anchorOrigin={{
@@ -18,7 +16,7 @@ const Message = ({ show, onClose, messages, status, duration = 4000 }) => {
       autoHideDuration={duration}
       onClose={onClose}
     >
-      <Alert onClose={() => setOpen(false)} severity={status}>
+      <Alert onClose={onClose} severity={status}>
         {messages.join("\n")}
       </Alert>
     </Snackbar>

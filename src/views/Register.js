@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useContext} from "react";
 import {useHistory} from "react-router";
 import {
     TextField,
@@ -7,7 +7,6 @@ import {
     CardActions,
     Button,
     Divider,
-    makeStyles,
     Box,
     Typography,
     InputAdornment,
@@ -18,23 +17,16 @@ import FAIcon from "../components/include/FontAwesomeIcon";
 import LocalStorage from "../adapters/LocalStorage";
 import Message from "../components/include/Message";
 import {useForm} from "react-hook-form";
-import {v4 as uuidv4} from "uuid";
+import classes from '../styles/register.module.scss'
+import {AccountDAO} from "../DB/AccountDAO";
+import {AccountDTO} from "../adapters/AccountDTO";
+import AppContext from "../store/app-context";
 
-const useStyles = makeStyles({
-    root: {
-        backgroundColor: "#292c31",
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "90%",
-    },
-});
+const accountDAO = new AccountDAO();
 
 const Register = () => {
-    const classes = useStyles();
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfrimPassword, setShowConfirmPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const history = useHistory();
     const [message, setMessage] = useState({
         show: false,
@@ -42,7 +34,7 @@ const Register = () => {
         duration: 4000,
         status: "error",
     });
-
+    const ctx = useContext(AppContext)
     const {
         register,
         handleSubmit,
@@ -54,26 +46,33 @@ const Register = () => {
     const passwordRef = useRef();
     passwordRef.current = watch("password", "");
 
-    const handleRegisterBtnClick = (data) => {
-        const ls = new LocalStorage("app-users");
-        let messagesss = "This user exist!";
-        let hasError = true;
+    const handleRegisterBtnClick = async (data) => {
+        let messageProp = "";
+        let hasError = false;
 
-        if (!ls.emailExist(data.email)) {
+        const user = await accountDAO.getAccountByEmail(data.email)
+
+        if (user) {
+            hasError = true;
+            messageProp = "This user exist!";
+        } else {
+            const account = new AccountDTO(data);
             const userData = new LocalStorage("app-user-data");
-            data.id = uuidv4().replace(/-/g, "");
-            data.permision = "user";
-            ls.addItem(data);
-
+            account.permission = "user"
+            accountDAO.createAccount(account)
+            const expireDate = Math.ceil(new Date().getTime() * 5 * 60 * 60)
             userData.saveUserData({
-                id: data.id,
-                permission: data.permision,
-                userName: data.firstName + " " + data.lastName,
+                id: account.id,
+                permission: account.permission,
+                userName: account.firstName + " " + account.lastName,
+                expireDate: expireDate
             });
-
-            messagesss = "You have bee registered successfully!";
-            hasError = false;
+            messageProp = "You have bee registered successfully!";
             reset();
+            ctx.setIsUserLoggedIn(true);
+            setTimeout(() => {
+                history.push('/panel')
+            }, message.duration)
         }
 
         setMessage((prevData) => {
@@ -81,22 +80,9 @@ const Register = () => {
                 ...prevData,
                 show: true,
                 status: hasError ? "error" : "success",
-                messages: [messagesss],
+                messages: [messageProp],
             };
         });
-
-        setTimeout(() => {
-            setMessage((prevData) => {
-                return {
-                    ...prevData,
-                    show: false,
-                    status: "error",
-                    messages: [],
-                };
-            });
-        }, message.duration + 100);
-
-        console.log("we are here", messagesss);
     };
 
     return (
@@ -113,7 +99,7 @@ const Register = () => {
                 duration={message.duration}
                 status={message.status}
             />
-            <Card className={classes.root}>
+            <Card className={classes['register-form']}>
                 <CardContent>
                     <Typography variant="h5">Rehister Form</Typography>
                     <form action="#">
@@ -215,7 +201,7 @@ const Register = () => {
                         </Box>
                         <Box margin="10px 0 0 0">
                             <TextField
-                                type={showConfrimPassword ? "text" : "password"}
+                                type={showConfirmPassword ? "text" : "password"}
                                 id="confirmPassword"
                                 label="Confirm Password"
                                 fullWidth
@@ -241,7 +227,7 @@ const Register = () => {
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <FAIcon
-                                                icon={showConfrimPassword ? faEye : faEyeSlash}
+                                                icon={showConfirmPassword ? faEye : faEyeSlash}
                                                 onClick={() =>
                                                     setShowConfirmPassword((prevData) => !prevData)
                                                 }

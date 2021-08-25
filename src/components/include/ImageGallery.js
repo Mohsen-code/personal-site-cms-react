@@ -32,16 +32,14 @@ const ImageGallery = ({ images }) => {
   }
 
   return (
-    <Box className={styles["custom-wrapper-class"]} display="flex">
       <LightGallery
-        elementClassNames={styles["custom-wrapper-class"]}
-        onInit={onInit}
-        speed={500}
-        plugins={[lgThumbnail, lgZoom]}
+          elementClassNames={styles["custom-wrapper-class"]}
+          onInit={onInit}
+          speed={500}
+          plugins={[lgThumbnail, lgZoom]}
       >
-        {items}
+          {items}
       </LightGallery>
-    </Box>
   );
 };
 

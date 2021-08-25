@@ -15,6 +15,8 @@ import {
 import { faUser, faEnvelope, faInbox, faComments, faMailBulk } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "../../components/include/FontAwesomeIcon";
 import TodoList from "../../components/Panel/Dashboard/TodoList";
+import {useEffect, useContext} from "react";
+import AppContext from "../../store/app-context";
 
 const useStyles = makeStyles({
   root: {
@@ -24,6 +26,7 @@ const useStyles = makeStyles({
 
 const Dashboard = () => {
   const classes = useStyles();
+  const {account} = useContext(AppContext)
 
   return (
     <Container>
@@ -43,14 +46,14 @@ const Dashboard = () => {
                           <ListItemIcon>
                             <FAIcon icon={faUser} fontSize="lg" />
                           </ListItemIcon>
-                          <ListItemText>Name: Mohsen Fallahnejad</ListItemText>
+                          <ListItemText>Name: {account.firstName} {account.lastName}</ListItemText>
                         </ListItem>
                         <Divider />
                         <ListItem>
                           <ListItemIcon>
                             <FAIcon icon={faEnvelope} fontSize="lg" />
                           </ListItemIcon>
-                          <ListItemText>Email: Mohsen Fallahnejad</ListItemText>
+                          <ListItemText>Email: {account.email}</ListItemText>
                         </ListItem>
                         <Divider />
                         <ListItem>

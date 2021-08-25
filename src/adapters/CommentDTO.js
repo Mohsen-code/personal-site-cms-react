@@ -9,8 +9,9 @@ export class CommentDTO {
     isPublic = false
     replyId = null
     userId = null
+    parentId = null
 
     constructor(init) {
-        if (init) Object.assign(init)
+        if (init) Object.assign(this, init)
     }
 }

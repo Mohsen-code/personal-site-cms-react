@@ -1,5 +1,5 @@
-import React from "react";
-import {Switch, Route, useRouteMatch} from "react-router-dom";
+import React, {useEffect, useContext} from "react";
+import {Switch, Route, useRouteMatch, useHistory} from "react-router-dom";
 import Dashboard from "./Dashboard";
 
 import Posts from './Posts'
@@ -7,9 +7,26 @@ import Post from "./Post";
 import {Categories} from "./Categories";
 import Category from "./Category";
 import {Comments} from "./Comments";
-
+import LocalStorage from "../../adapters/LocalStorage";
+import AppContext from "../../store/app-context";
 const Index = () => {
     let {path} = useRouteMatch();
+    const ctx = useContext(AppContext)
+    const history = useHistory()
+
+    const checkUserDataExpireDate = () => {
+        const userData = new LocalStorage("app-user-data").getUserData();
+        const currentDate = new Date().getTime()
+        if (!userData.expireDate || currentDate > userData.expireDate){
+            localStorage.removeItem("app-user-data")
+            ctx.setIsUserLoggedIn(false)
+            history.push('/login')
+        }
+    }
+
+    useEffect(() => {
+        checkUserDataExpireDate()
+    }, [])
 
     return (
         <React.Fragment>

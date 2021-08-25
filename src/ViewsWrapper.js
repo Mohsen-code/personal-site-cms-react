@@ -24,7 +24,7 @@ import LanguageIcon from "@material-ui/icons/Language";
 import ColorPaletteIcon from "@material-ui/icons/Palette";
 import EmailIcon from "@material-ui/icons/Email";
 import FAIcon from "./components/include/FontAwesomeIcon";
-import {faHome, faUser, faThLarge, faEdit, faSitemap, faComments} from "@fortawesome/free-solid-svg-icons";
+import {faHome, faUser, faUserPlus, faThLarge, faEdit, faSitemap, faComments} from "@fortawesome/free-solid-svg-icons";
 import {faBloggerB} from "@fortawesome/free-brands-svg-icons";
 import avatar from './assets/images/5.jpg'
 
@@ -150,38 +150,59 @@ const ViewsWrapper = ({children}) => {
                             <Typography variant="h6">Blog</Typography>
                         </ListItemText>
                     </ListItem>
-                    <ListItem button onClick={() => handleDrawerMenuClick('panel')}>
-                        <ListItemIcon>
-                            <FAIcon icon={faThLarge} fontSize="lg"/>
-                        </ListItemIcon>
-                        <ListItemText>
-                            <Typography variant="h6">Dashboard</Typography>
-                        </ListItemText>
-                    </ListItem>
-                    <ListItem button onClick={() => handleDrawerMenuClick('panel/posts')}>
-                        <ListItemIcon>
-                            <FAIcon icon={faEdit} fontSize="lg"/>
-                        </ListItemIcon>
-                        <ListItemText>
-                            <Typography variant="h6">Posts</Typography>
-                        </ListItemText>
-                    </ListItem>
-                    <ListItem button onClick={() => handleDrawerMenuClick('panel/categories')}>
-                        <ListItemIcon>
-                            <FAIcon icon={faSitemap} fontSize="lg"/>
-                        </ListItemIcon>
-                        <ListItemText>
-                            <Typography variant="h6">Categories</Typography>
-                        </ListItemText>
-                    </ListItem>
-                    <ListItem button onClick={() => handleDrawerMenuClick('panel/comments')}>
-                        <ListItemIcon>
-                            <FAIcon icon={faComments} fontSize="lg"/>
-                        </ListItemIcon>
-                        <ListItemText>
-                            <Typography variant="h6">Comments</Typography>
-                        </ListItemText>
-                    </ListItem>
+                    {!ctx.isUserLoggedIn && <React.Fragment>
+                        <ListItem button onClick={() => handleDrawerMenuClick('login')}>
+                            <ListItemIcon>
+                                <FAIcon icon={faUser} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Login</Typography>
+                            </ListItemText>
+                        </ListItem>
+                        <ListItem button onClick={() => handleDrawerMenuClick('register')}>
+                            <ListItemIcon>
+                                <FAIcon icon={faUserPlus} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Register</Typography>
+                            </ListItemText>
+                        </ListItem>
+                    </React.Fragment>}
+                    {ctx.isUserLoggedIn && <React.Fragment>
+                        <ListItem button onClick={() => handleDrawerMenuClick('panel')}>
+                            <ListItemIcon>
+                                <FAIcon icon={faThLarge} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Dashboard</Typography>
+                            </ListItemText>
+                        </ListItem>
+                        <ListItem button onClick={() => handleDrawerMenuClick('panel/posts')}>
+                            <ListItemIcon>
+                                <FAIcon icon={faEdit} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Posts</Typography>
+                            </ListItemText>
+                        </ListItem>
+                        <ListItem button onClick={() => handleDrawerMenuClick('panel/categories')}>
+                            <ListItemIcon>
+                                <FAIcon icon={faSitemap} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Categories</Typography>
+                            </ListItemText>
+                        </ListItem>
+                        <ListItem button onClick={() => handleDrawerMenuClick('panel/comments')}>
+                            <ListItemIcon>
+                                <FAIcon icon={faComments} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Comments</Typography>
+                            </ListItemText>
+                        </ListItem>
+                    </React.Fragment>}
+
                 </List>
             </SwipeableDrawer>
 

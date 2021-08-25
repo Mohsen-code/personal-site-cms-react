@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, useCallback} from "react";
 import {useHistory, useRouteMatch, useParams} from 'react-router-dom'
 import {
     Container,
@@ -10,7 +10,7 @@ import {
     Divider,
     TextField,
     makeStyles,
-    Typography, LinearProgress, InputLabel, Select, FormControl, MenuItem, Checkbox, ListItemText, Input
+    Typography, LinearProgress, InputLabel, Select, FormControl, MenuItem, ListItemText, Input
 } from "@material-ui/core";
 import CustomButton from "../../adapters/CustomButton";
 import noImage from '../../assets/images/no-image.jpg'
@@ -84,11 +84,11 @@ const Post = () => {
     const fileRef = useRef();
 
 
-    const getPost = async (postId) => {
+    const getPost = useCallback(async (postId) => {
         const post = await postDAO.getPost(postId);
         setPost(post)
         setTags(post.tags.join(','))
-    }
+    }, [])
 
     useEffect(() => {
         categoryDAO.getCategories().then(categories => {
@@ -101,15 +101,14 @@ const Post = () => {
         if (editMode) {
             getPost(postId)
         }
-    }, [postId])
+    }, [postId, editMode, getPost])
 
     useEffect(() => {
         if (editMode) {
             const categoriesTitle = util.mapSpecificDataFromArray(post.categories, categories, 'id', 'title');
             setSelectedCategories(categoriesTitle)
         }
-    }, [categories])
-
+    }, [categories, editMode, post.categories, util])
 
 
     const handleFileChooserChanges = event => {

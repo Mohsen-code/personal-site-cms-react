@@ -138,9 +138,7 @@ const Home = () => {
             description="Products we are proud to showcase and show off to the world. We
             think you'll love them!"
           >
-            <Box>
-              <ImageGallery images={imageGalleryItems} />
-            </Box>
+            <ImageGallery images={imageGalleryItems} />
           </Section>
 
           <Section

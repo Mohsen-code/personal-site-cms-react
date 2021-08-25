@@ -5,7 +5,7 @@ const db = new Dexie('MyDataBase');
 db.version(1).stores({
     accounts: "id, firstName, lastName, username, email, password, permission",
     posts: "id, thumbnail, title, summary, content, *tags, visits, *comments, *categories",
-    comments: "id, postId, name, email, content, isPublic, replyId, userId",
+    comments: "id, postId, name, email, content, isPublic, replyId, userId, parentId",
     categories: "id, thumbnail, title, isPublic",
     messages: "id, name, email, title, content, *files"
 })

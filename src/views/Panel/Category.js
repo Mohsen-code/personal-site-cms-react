@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, useCallback} from "react";
 import {useHistory, useParams} from 'react-router-dom'
 import {
     Container,
@@ -61,16 +61,16 @@ const Category = () => {
     const categoryId = params.id;
     const editMode = !!params.id;
 
-    const getCategory = async () => {
+    const getCategory = useCallback(async () => {
         const category = await categoryDAO.getCategory(categoryId)
         setCategory(new CategoryDTO(category))
-    }
+    }, [categoryId])
 
     useEffect(() => {
         if (editMode) {
             getCategory()
         }
-    }, [params.id])
+    }, [params.id, editMode, getCategory])
 
     const handleUploadThumbnail = () => {
         fileRef.current.click()
