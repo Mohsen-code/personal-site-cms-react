@@ -60,7 +60,7 @@ const Register = () => {
             const userData = new LocalStorage("app-user-data");
             account.permission = "user"
             accountDAO.createAccount(account)
-            const expireDate = Math.ceil(new Date().getTime() * 5 * 60 * 60)
+            const expireDate = Math.ceil(new Date().getTime() + (5 * 60 * 60 * 1000))
             userData.saveUserData({
                 id: account.id,
                 permission: account.permission,

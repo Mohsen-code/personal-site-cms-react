@@ -57,7 +57,7 @@ const Login = () => {
             ctx.setAccount(new AccountDTO(user))
             ctx.setIsUserLoggedIn(true);
             const userData = new LocalStorage("app-user-data");
-            const expireDate = Math.ceil(new Date().getTime() * 5 * 60 * 60)
+            const expireDate = Math.ceil(new Date().getTime() + (5 * 60 * 60 * 1000))
             userData.saveUserData({
                 id: user.id,
                 permission: user.permission,
