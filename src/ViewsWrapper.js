@@ -24,7 +24,16 @@ import LanguageIcon from "@material-ui/icons/Language";
 import ColorPaletteIcon from "@material-ui/icons/Palette";
 import EmailIcon from "@material-ui/icons/Email";
 import FAIcon from "./components/include/FontAwesomeIcon";
-import {faHome, faUser, faUserPlus, faThLarge, faEdit, faSitemap, faComments} from "@fortawesome/free-solid-svg-icons";
+import {
+    faHome,
+    faUser,
+    faUserPlus,
+    faThLarge,
+    faEdit,
+    faSitemap,
+    faComments,
+    faSignOutAlt
+} from "@fortawesome/free-solid-svg-icons";
 import {faBloggerB} from "@fortawesome/free-brands-svg-icons";
 import avatar from './assets/images/5.jpg'
 
@@ -110,6 +119,13 @@ const ViewsWrapper = ({children}) => {
     let userIconLabel = "Login";
     if (route.pathname === "/register") userIconLabel = "Register";
     if (route.pathname === "/panel") userIconLabel = "Panel";
+
+    const handleClickOnSigOut = () => {
+        localStorage.removeItem("app-user-data");
+        history.push('/login')
+        ctx.toggleShowDrawer()
+        ctx.setIsUserLoggedIn(false)
+    }
 
     return (
         <React.Fragment>
@@ -199,6 +215,14 @@ const ViewsWrapper = ({children}) => {
                             </ListItemIcon>
                             <ListItemText>
                                 <Typography variant="h6">Comments</Typography>
+                            </ListItemText>
+                        </ListItem>
+                        <ListItem button onClick={handleClickOnSigOut}>
+                            <ListItemIcon>
+                                <FAIcon icon={faSignOutAlt} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Sign Out</Typography>
                             </ListItemText>
                         </ListItem>
                     </React.Fragment>}
