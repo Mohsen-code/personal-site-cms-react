@@ -1,9 +1,10 @@
+import {Link} from 'react-router-dom'
 import Message from "../../components/include/Message";
 import {
     Box,
     Card,
-    CardContent, Container,
-    Grid, makeStyles,
+    CardContent, Container, FormControlLabel,
+    Grid, makeStyles, Switch,
     Table,
     TableBody,
     TableCell,
@@ -12,13 +13,14 @@ import {
     TableRow
 } from "@material-ui/core";
 import FAIcon from "../../components/include/FontAwesomeIcon";
-import {faEdit, faTrash, faEye} from "@fortawesome/free-solid-svg-icons";
+import {faTrash, faEye} from "@fortawesome/free-solid-svg-icons";
 import {Alert} from "@material-ui/lab";
 import React, {useCallback, useEffect, useState} from "react";
 import {CommentDAO} from "../../DB/CommentDAO";
 import CustomIconButton from "../../adapters/CustomIconButton";
 import {PostDAO} from "../../DB/PostDAO";
 import {CommentDialog} from "../../components/Panel/Comments/CommentDialog";
+import {useComments} from "../../hooks/comments";
 
 const commentDAO = new CommentDAO();
 const postDAO = new PostDAO();
@@ -26,6 +28,10 @@ const postDAO = new PostDAO();
 const useStyles = makeStyles({
     card: {
         backgroundColor: "#292c31",
+    },
+    postLink: {
+        textDecoration: 'none',
+        color: '#1976d2'
     }
 });
 
@@ -35,6 +41,7 @@ const PrimaryIconButton = new CustomIconButton('primary');
 
 export const Comments = () => {
     const classes = useStyles()
+    const [commentsSwitch, setCommentsSwitch] = useState(false)
     const [comments, setComments] = useState([])
     const [commentId, setCommentId] = useState(null)
     const [message, setMessage] = useState({
@@ -44,6 +51,7 @@ export const Comments = () => {
         status: "error",
     });
     const [showDialog, setShowDialog] = useState(false);
+    const {deleteCommentAndRepliesFromIndexedDB} = useComments()
 
     const mapPostIdToPostTitle = useCallback(async (postId) => {
         const post = await postDAO.getPost(postId)
@@ -68,10 +76,11 @@ export const Comments = () => {
         getComments(false)
     }, [getComments])
 
-    const handleDeleteComment = (commentId) => {
-        commentDAO.deleteComment(commentId)
+    const handleDeleteComment = (comment) => {
+        // commentDAO.deleteComment(comment.id)
+        deleteCommentAndRepliesFromIndexedDB(comment)
         setComments(prevState => {
-            const filteredComments = prevState.filter(comment => comment.id !== commentId)
+            const filteredComments = prevState.filter(commentArg => commentArg.id !== comment.id)
             return [...filteredComments];
         })
         setMessage(prevState => {
@@ -88,6 +97,11 @@ export const Comments = () => {
     const handleOpenComment = (commentId) => {
         setCommentId(commentId)
         setShowDialog(true)
+    }
+
+    const handleCommentsSwitchChanges = () => {
+        setCommentsSwitch(prevState => !prevState)
+        getComments(!commentsSwitch);
     }
 
     return (
@@ -109,7 +123,19 @@ export const Comments = () => {
 
             <Grid container>
                 <Grid item xs={12}>
-                    <Box margin="20px 0"/>
+                    <Box margin="20px 0">
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={commentsSwitch}
+                                    onChange={handleCommentsSwitchChanges}
+                                    name="checkedB"
+                                    color="primary"
+                                />
+                            }
+                            label="Published Comments"
+                        />
+                    </Box>
                 </Grid>
                 <Grid item xs={12}>
                     <Card className={classes.card}>
@@ -130,13 +156,10 @@ export const Comments = () => {
                                                 <TableRow key={comment.id}>
                                                     <TableCell>{comment.name || ''}</TableCell>
                                                     <TableCell>{comment.email || ''}</TableCell>
-                                                    <TableCell>{comment.postTitle || ''}</TableCell>
+                                                    <TableCell>{<Link to={`/post/${comment.id}`} className={classes.postLink}>{comment.postTitle}</Link> || ''}</TableCell>
                                                     <TableCell>
-                                                        {/*<WarningIconButton>
-                                                            <FAIcon icon={faEdit} fontSize="sm"/>
-                                                        </WarningIconButton>*/}
                                                         <ErrorIconButton
-                                                            onClick={() => handleDeleteComment(comment.id)}>
+                                                            onClick={() => handleDeleteComment(comment)}>
                                                             <FAIcon icon={faTrash} fontSize="sm"/>
                                                         </ErrorIconButton>
                                                         <PrimaryIconButton
