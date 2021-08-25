@@ -155,6 +155,7 @@ export const useComments = () => {
         userWantToReply,
         replyComment,
         setReplyComment,
+        deleteCommentAndRepliesFromIndexedDB,
         handleReplyButtonOnClick,
         handleDeleteButtonClicked,
         handleEditComment,
