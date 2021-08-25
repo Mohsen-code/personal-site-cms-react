@@ -5,4 +5,8 @@ export class TodoDTO {
     description = "";
     isDone = false
     isImportant = false
+
+    constructor(init) {
+        if (init) Object.assign(this, init)
+    }
 }
