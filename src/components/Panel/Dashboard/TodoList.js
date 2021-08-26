@@ -100,7 +100,6 @@ const TodoList = () => {
     }, [getTodosByIsDone])
 
     const handleFormSubmission = (data) => {
-        console.log('data => ', data)
         if (!editMode) {
             handleNewTodo(data);
             return;
@@ -110,18 +109,15 @@ const TodoList = () => {
     }
     const handleNewTodo = (data) => {
         const {title, description} = data;
-        setTodo(prevState => {
-            return {
-                ...prevState,
-                title,
-                description
-            }
-        }, () => {
-            // todoDAO.createTodo(todo)
-            console.log('todo is => ', todo)
-            setTodos(prevState => {
-                return [...prevState, todo]
-            })
+        const newTodo = {
+            ...todo,
+            title,
+            description
+        }
+        setTodo(newTodo);
+        todoDAO.createTodo(newTodo)
+        setTodos(prevState => {
+            return [...prevState, newTodo]
         })
 
         setMessage(prevState => {
@@ -133,28 +129,51 @@ const TodoList = () => {
             }
         })
         setShowDialog(false);
-        setTodo(new TodoDTO())
+        setTodo(prevState => new TodoDTO())
         reset()
     }
 
     const handleUpdateTodo = (data) => {
+        const updatedTodo = {
+            ...todo,
+            title: data.title ? data.title : todo.title,
+            description: data.description ? data.description : todo.description
+        }
+        todoDAO.updateTodo(updatedTodo)
+        setTodos(prevState => {
+            if (!updatedTodo.isDone) {
+                const todoIndex = prevState.findIndex(todo => todo.id === updatedTodo.id);
+                prevState[todoIndex] = updatedTodo;
+                return [...prevState]
+            }
 
+            const filteredTodos = prevState.filter(todo => todo.id !== updatedTodo.id)
+            return [...filteredTodos]
+        })
         setShowDialog(false);
         reset()
     }
 
     const handleAddNewTodoClickBtn = () => {
         setEditMode(false)
+        setTodo(new TodoDTO())
         setShowDialog(true)
     }
 
     const handleClickOnEditTodo = (todoItem) => {
         setEditMode(true)
+        setTodo(todoItem)
         setShowDialog(true)
     }
 
-    // const todos = new TodoListAdapter();
-    // const todosItems = todos.getTodos("unFinished");
+    const handleClickOnTodoCheckBox = (todo) => {
+        const updatedTodo = new TodoDTO({...todo, isDone: true})
+        todoDAO.updateTodo(updatedTodo)
+        setTodos(prevState => {
+            const filteredTodos = prevState.filter(todo => todo.id !== updatedTodo.id)
+            return [...filteredTodos]
+        })
+    }
 
     const [showDialog, setShowDialog] = useState(false);
 
@@ -191,7 +210,7 @@ const TodoList = () => {
                                 {...register("title", {
                                     required: {
                                         value: true,
-                                        message: "Please enter your email",
+                                        message: "Please enter title",
                                     },
                                     minLength: {
                                         value: 3,
@@ -262,7 +281,7 @@ const TodoList = () => {
                             return (
                                 <React.Fragment key={todoItem.id}>
                                     <ListItem button>
-                                        <ListItemIcon>
+                                        <ListItemIcon onClick={() => handleClickOnTodoCheckBox(todoItem)}>
                                             <PrimaryCheckbox edge="start"/>
                                         </ListItemIcon>
                                         <ListItemText>{todoItem.title}</ListItemText>
