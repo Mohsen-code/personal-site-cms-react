@@ -7,6 +7,8 @@ import Post from "./Post";
 import {Categories} from "./Categories";
 import Category from "./Category";
 import {Comments} from "./Comments";
+import {TodoManager} from "./TodoManager";
+
 import LocalStorage from "../../adapters/LocalStorage";
 import AppContext from "../../store/app-context";
 const Index = () => {
@@ -54,6 +56,9 @@ const Index = () => {
                 </Route>
                 <Route path={`${path}/comments`}>
                     <Comments/>
+                </Route>
+                <Route path={`${path}/todos`}>
+                    <TodoManager/>
                 </Route>
             </Switch>
         </React.Fragment>
