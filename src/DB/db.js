@@ -7,7 +7,7 @@ db.version(1).stores({
     posts: "id, thumbnail, title, summary, content, *tags, visits, *comments, *categories",
     comments: "id, postId, name, email, content, isPublic, replyId, userId, parentId",
     categories: "id, thumbnail, title, isPublic",
-    messages: "id, name, email, title, content, *files",
+    messages: "id, name, email, title, content, isSeen",
     todos: "id, title, description, isDone, isImportant"
 })
 
