@@ -258,13 +258,13 @@ const ViewsWrapper = ({children}) => {
                         Mohsen App
                     </Typography>
                     <Box component="div"></Box>
-                    <IconButton edge="end" color="inherit" aria-label="menu">
+                    {/*<IconButton edge="end" color="inherit" aria-label="menu">
                         <LanguageIcon fontSize="small"/>
                     </IconButton>
                     <IconButton edge="end" color="inherit" aria-label="menu">
                         <ColorPaletteIcon fontSize="small"/>
-                    </IconButton>
-                    <IconButton edge="end" color="inherit" aria-label="menu">
+                    </IconButton>*/}
+                    <IconButton edge="end" color="inherit" aria-label="menu" onClick={() => history.push('/contact-us')}>
                         <EmailIcon fontSize="small"/>
                     </IconButton>
                 </Toolbar>
