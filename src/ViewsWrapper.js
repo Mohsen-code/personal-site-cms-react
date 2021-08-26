@@ -32,7 +32,7 @@ import {
     faEdit,
     faSitemap,
     faComments,
-    faSignOutAlt
+    faSignOutAlt, faList
 } from "@fortawesome/free-solid-svg-icons";
 import {faBloggerB} from "@fortawesome/free-brands-svg-icons";
 import avatar from './assets/images/5.jpg'
@@ -220,6 +220,14 @@ const ViewsWrapper = ({children}) => {
                             </ListItemIcon>
                             <ListItemText>
                                 <Typography variant="h6">Comments</Typography>
+                            </ListItemText>
+                        </ListItem>
+                        <ListItem button onClick={() => handleDrawerMenuClick('panel/todos')}>
+                            <ListItemIcon>
+                                <FAIcon icon={faList} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Todo Manager</Typography>
                             </ListItemText>
                         </ListItem>
                         <ListItem button onClick={handleClickOnSigOut}>
