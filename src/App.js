@@ -7,6 +7,7 @@ import Login from "./views/Login";
 import Register from "./views/Register";
 import Panel from "./views/Panel/Index";
 import {Post} from "./views/Post";
+import {ContactUs} from './views/ContactUs'
 
 import {createTheme, ThemeProvider} from "@material-ui/core";
 import ViewsWrapper from "./ViewsWrapper";
@@ -75,6 +76,9 @@ function App() {
                         </Route>
                         <Route path="/register" exact>
                             <Register/>
+                        </Route>
+                        <Route path="/contact-us" exact>
+                            <ContactUs/>
                         </Route>
                         <Route path="/panel">
                             <Panel/>
