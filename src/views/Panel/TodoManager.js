@@ -13,7 +13,7 @@ import {
     Box,
     Card,
     CardContent,
-    makeStyles, Avatar, Switch, FormControlLabel, TextField
+    makeStyles, Switch, FormControlLabel, TextField
 } from "@material-ui/core";
 import Message from "../../components/include/Message";
 import CustomButton from "../../adapters/CustomButton";
