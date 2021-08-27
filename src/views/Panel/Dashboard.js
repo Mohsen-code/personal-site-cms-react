@@ -19,6 +19,7 @@ import {useEffect, useContext, useState, useCallback} from "react";
 import AppContext from "../../store/app-context";
 import {PostDAO} from "../../DB/PostDAO";
 import {CommentDAO} from "../../DB/CommentDAO";
+import {MessageDAO} from "../../DB/MessageDAO";
 
 const useStyles = makeStyles({
   root: {
@@ -28,20 +29,23 @@ const useStyles = makeStyles({
 
 const postDAO = new PostDAO();
 const commentDAO = new CommentDAO();
+const messageDAO = new MessageDAO();
 
 const Dashboard = () => {
   const classes = useStyles();
   const {account} = useContext(AppContext)
   const [postsCount, setPostsCount] = useState(0);
   const [commentsCount, setCommentsCount] = useState(0);
+  const [messagesCount, setMessagesCount] = useState(0);
 
-  const getPostsAndCommentsCount = useCallback(async () => {
+  const getPostsAndCommentsAndMessagesCount = useCallback(async () => {
     setPostsCount(await postDAO.getPostsCount())
     setCommentsCount(await commentDAO.getCommentsCount())
+    setMessagesCount(await messageDAO.getMessagesCountByStatus())
   }, [])
   useEffect(() => {
-    getPostsAndCommentsCount()
-  }, [getPostsAndCommentsCount])
+    getPostsAndCommentsAndMessagesCount()
+  }, [getPostsAndCommentsAndMessagesCount])
 
   return (
     <Container>
@@ -89,7 +93,7 @@ const Dashboard = () => {
                           <ListItemIcon>
                             <FAIcon icon={faMailBulk} fontSize="lg" />
                           </ListItemIcon>
-                          <ListItemText>Messages Number: 23</ListItemText>
+                          <ListItemText>Messages Number: {messagesCount}</ListItemText>
                         </ListItem>
                         <Divider />
                       </List>
