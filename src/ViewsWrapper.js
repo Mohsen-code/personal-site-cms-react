@@ -32,7 +32,7 @@ import {
     faEdit,
     faSitemap,
     faComments,
-    faSignOutAlt, faList
+    faSignOutAlt, faList, faInbox
 } from "@fortawesome/free-solid-svg-icons";
 import {faBloggerB} from "@fortawesome/free-brands-svg-icons";
 import avatar from './assets/images/5.jpg'
@@ -155,7 +155,7 @@ const ViewsWrapper = ({children}) => {
                 </Box>
                 <Divider/>
                 <List>
-                    <ListItem button onClick={() => handleDrawerMenuClick('')}>
+                    {/*<ListItem button onClick={() => handleDrawerMenuClick('')}>
                         <ListItemIcon>
                             <FAIcon icon={faHome} fontSize="lg"/>
                         </ListItemIcon>
@@ -170,7 +170,7 @@ const ViewsWrapper = ({children}) => {
                         <ListItemText>
                             <Typography variant="h6">Blog</Typography>
                         </ListItemText>
-                    </ListItem>
+                    </ListItem>*/}
                     {!ctx.isUserLoggedIn && <React.Fragment>
                         <ListItem button onClick={() => handleDrawerMenuClick('login')}>
                             <ListItemIcon>
@@ -227,7 +227,15 @@ const ViewsWrapper = ({children}) => {
                                 <FAIcon icon={faList} fontSize="lg"/>
                             </ListItemIcon>
                             <ListItemText>
-                                <Typography variant="h6">Todo Manager</Typography>
+                                <Typography variant="h6">Todo Management</Typography>
+                            </ListItemText>
+                        </ListItem>
+                        <ListItem button onClick={() => handleDrawerMenuClick('panel/messages')}>
+                            <ListItemIcon>
+                                <FAIcon icon={faInbox} fontSize="lg"/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                <Typography variant="h6">Messages</Typography>
                             </ListItemText>
                         </ListItem>
                         <ListItem button onClick={handleClickOnSigOut}>
