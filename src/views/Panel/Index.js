@@ -9,6 +9,7 @@ import Category from "./Category";
 import {Comments} from "./Comments";
 import {TodoManager} from "./TodoManager";
 import {Messages} from "./Messages";
+import {Users} from "./Users";
 
 import LocalStorage from "../../adapters/LocalStorage";
 import AppContext from "../../store/app-context";
@@ -63,6 +64,9 @@ const Index = () => {
                 </Route>
                 <Route path={`${path}/messages`}>
                     <Messages/>
+                </Route>
+                <Route path={`${path}/users`}>
+                    <Users/>
                 </Route>
             </Switch>
         </React.Fragment>
