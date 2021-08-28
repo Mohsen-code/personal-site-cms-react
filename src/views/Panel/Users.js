@@ -4,6 +4,7 @@ import defaultImage from '../../assets/images/no-image.jpg'
 import {AccountDAO} from "../../DB/AccountDAO";
 import {useCallback, useEffect, useState} from "react";
 import {AccountDTO} from "../../adapters/AccountDTO";
+import {useHistory} from 'react-router-dom'
 
 const accountDAO = new AccountDAO();
 
@@ -21,6 +22,7 @@ const ErrorButton = new CustomButton('error')
 export const Users = () => {
     const classes = useStyle()
     const [accounts, setAccounts] = useState([])
+    const history = useHistory()
 
     const getAccounts = useCallback(async () => {
         const accountsList = await accountDAO.getAccounts()
@@ -43,7 +45,7 @@ export const Users = () => {
                                     <Grid container>
                                         <Grid item xs={12} sm={4}>
                                             <Box margin={'0 10px 0 0'}>
-                                                <img src={defaultImage} alt={'avatar'} style={{width: '100%'}}/>
+                                                <img src={account.thumbnail || defaultImage} alt={'avatar'} style={{width: '100%'}}/>
                                             </Box>
                                         </Grid>
                                         <Grid item xs={12} sm={8}>
@@ -57,7 +59,7 @@ export const Users = () => {
                                 </CardContent>
                                 <Divider/>
                                 <CardActions>
-                                    <PrimaryButton>Edit</PrimaryButton>
+                                    <PrimaryButton onClick={() => history.push('/panel/profile/' + account.id)}>Edit</PrimaryButton>
                                     <ErrorButton>Remove</ErrorButton>
                                 </CardActions>
                             </Card>
