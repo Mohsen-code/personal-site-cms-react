@@ -30,6 +30,9 @@ const useStyle = makeStyles({
     },
     cardImage: {
         width: '100%'
+    },
+    colStyle: {
+        margin: '0 auto'
     }
 })
 
@@ -159,7 +162,7 @@ export const Profile = () => {
                 status={message.status}
             />
             <Grid container>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={8} className={classes.colStyle}>
                     <Card className={classes.card}>
                         <form onSubmit={handleSubmit(handleSubmitForm)}>
                             <CardContent>

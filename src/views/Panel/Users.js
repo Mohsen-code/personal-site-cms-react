@@ -12,6 +12,9 @@ const useStyle = makeStyles({
     card: {
         backgroundColor: "#292c31",
         margin: '20px 0 0 0'
+    },
+    colStyle: {
+        margin: '0 auto'
     }
 })
 
@@ -39,7 +42,7 @@ export const Users = () => {
             <Grid container>
                 {accounts.map(account => {
                     return (
-                        <Grid item xs={12} key={account.id}>
+                        <Grid item xs={12} md={8} className={classes.colStyle} key={account.id}>
                             <Card className={classes.card}>
                                 <CardContent>
                                     <Grid container>

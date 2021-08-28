@@ -20,6 +20,7 @@ import AppContext from "../../store/app-context";
 import {PostDAO} from "../../DB/PostDAO";
 import {CommentDAO} from "../../DB/CommentDAO";
 import {MessageDAO} from "../../DB/MessageDAO";
+import styles from '../../styles/dashboard.module.scss'
 
 const useStyles = makeStyles({
     root: {
@@ -51,7 +52,7 @@ const Dashboard = () => {
         <Container>
             <Box padding="20px 0 0 0">
                 <Grid container>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} md={6}>
                         <Card className={classes.root}>
                             <CardContent>
                                 <Grid container>
@@ -106,7 +107,7 @@ const Dashboard = () => {
                         </Card>
                     </Grid>
 
-                    <Grid item xs={12} style={{margin: '20px 0'}}>
+                    <Grid item xs={12} md={6} className={styles.rightCol}>
                         <TodoList/>
                     </Grid>
                 </Grid>

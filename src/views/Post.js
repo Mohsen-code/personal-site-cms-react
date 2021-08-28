@@ -29,6 +29,9 @@ const useStyle = makeStyles({
         backgroundColor: '#3b3f47',
         padding: '10px',
         border: '1px solid #171a1d'
+    },
+    colStyle: {
+        margin: '0 auto'
     }
 })
 
@@ -136,7 +139,7 @@ export const Post = () => {
                 status={message.status}
             />
             <Grid container>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={8} className={classes.colStyle}>
                     <Card className={classes.card}>
                         <img src={post.thumbnail || defaultImage} className={classes.cardImage} alt="post-thumbnail"/>
                         <Box padding="10px">
@@ -151,13 +154,13 @@ export const Post = () => {
                         </Box>
                     </Card>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={8} className={classes.colStyle}>
                     {commentsTrees.map(comment => {
                         return (<ShowComment key={comment.id} comment={comment} replyButtonOnClick={handleReplyButtonOnClick}/>)
                     })}
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid item xs={12} md={8} className={classes.colStyle}>
                     {replyCommentName && <Alert variant="filled" severity="info" action={
                         <PrimaryButton onClick={handleCancelReplyClickButton}>cancel</PrimaryButton>
                     }>

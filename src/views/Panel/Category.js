@@ -26,6 +26,9 @@ const useStyles = makeStyles({
     card: {
         backgroundColor: "#292c31",
         marginTop: '20px'
+    },
+    colStyle: {
+        margin: '0 auto'
     }
 })
 
@@ -142,7 +145,7 @@ const Category = () => {
                 status={message.status}
             />
             <Grid container>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={8} className={classes.colStyle}>
                     <Card className={classes.card}>
                         <CardContent>
                             <Box>

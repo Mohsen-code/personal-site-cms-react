@@ -38,9 +38,13 @@ import CustomCheckbox from "../../adapters/CustomCheckbox";
 const useStyles = makeStyles((theme) => ({
     card: {
         backgroundColor: "#292c31",
+        marginTop: '20px'
     },
     formControl: {
         width: '100%'
+    },
+    colStyle: {
+        margin: '0 auto'
     }
 }))
 
@@ -222,7 +226,7 @@ const Post = () => {
                 <LinearProgress/>
             </Dialog>
             <Grid container>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={8} className={classes.colStyle}>
                     <Card className={classes.card}>
                         <CardContent>
                             <Box>
