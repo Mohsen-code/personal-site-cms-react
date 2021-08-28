@@ -10,6 +10,7 @@ import {Comments} from "./Comments";
 import {TodoManager} from "./TodoManager";
 import {Messages} from "./Messages";
 import {Users} from "./Users";
+import {Profile} from "./Profile";
 
 import LocalStorage from "../../adapters/LocalStorage";
 import AppContext from "../../store/app-context";
@@ -67,6 +68,12 @@ const Index = () => {
                 </Route>
                 <Route path={`${path}/users`}>
                     <Users/>
+                </Route>
+                <Route path={`${path}/profile`} exact>
+                    <Profile/>
+                </Route>
+                <Route path={`${path}/profile/:id`}>
+                    <Profile/>
                 </Route>
             </Switch>
         </React.Fragment>
