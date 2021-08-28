@@ -32,10 +32,10 @@ import {
     faEdit,
     faSitemap,
     faComments,
-    faSignOutAlt, faList, faInbox, faUsers
+    faSignOutAlt, faList, faInbox, faUsers, faIdCard
 } from "@fortawesome/free-solid-svg-icons";
 import {faBloggerB} from "@fortawesome/free-brands-svg-icons";
-import avatar from './assets/images/5.jpg'
+import avatar from './assets/images/no-image.jpg'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -143,7 +143,7 @@ const ViewsWrapper = ({children}) => {
                 <Box width="260px" display="flex">
                     <Box padding="10px">
                         {/*<img src={avatar} style={{width: '65px', height: '65px', borderRadius: '100%'}}/>*/}
-                        <Avatar src={avatar}/>
+                        <Avatar src={ctx.account.thumbnail || avatar}/>
                     </Box>
                     <Box flex="1" display="flex" flexDirection="row" alignItems="center" flexWrap="wrap">
                         <div>
@@ -198,30 +198,34 @@ const ViewsWrapper = ({children}) => {
                                 <Typography variant="h6">Dashboard</Typography>
                             </ListItemText>
                         </ListItem>
-                        <ListItem button onClick={() => handleDrawerMenuClick('panel/posts')}>
-                            <ListItemIcon>
-                                <FAIcon icon={faEdit} fontSize="lg"/>
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Typography variant="h6">Posts</Typography>
-                            </ListItemText>
-                        </ListItem>
-                        <ListItem button onClick={() => handleDrawerMenuClick('panel/categories')}>
-                            <ListItemIcon>
-                                <FAIcon icon={faSitemap} fontSize="lg"/>
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Typography variant="h6">Categories</Typography>
-                            </ListItemText>
-                        </ListItem>
-                        <ListItem button onClick={() => handleDrawerMenuClick('panel/comments')}>
-                            <ListItemIcon>
-                                <FAIcon icon={faComments} fontSize="lg"/>
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Typography variant="h6">Comments</Typography>
-                            </ListItemText>
-                        </ListItem>
+                        {
+                            ctx.account.permission === 'admin' && <React.Fragment>
+                                <ListItem button onClick={() => handleDrawerMenuClick('panel/posts')}>
+                                    <ListItemIcon>
+                                        <FAIcon icon={faEdit} fontSize="lg"/>
+                                    </ListItemIcon>
+                                    <ListItemText>
+                                        <Typography variant="h6">Posts</Typography>
+                                    </ListItemText>
+                                </ListItem>
+                                <ListItem button onClick={() => handleDrawerMenuClick('panel/categories')}>
+                                    <ListItemIcon>
+                                        <FAIcon icon={faSitemap} fontSize="lg"/>
+                                    </ListItemIcon>
+                                    <ListItemText>
+                                        <Typography variant="h6">Categories</Typography>
+                                    </ListItemText>
+                                </ListItem>
+                                <ListItem button onClick={() => handleDrawerMenuClick('panel/comments')}>
+                                    <ListItemIcon>
+                                        <FAIcon icon={faComments} fontSize="lg"/>
+                                    </ListItemIcon>
+                                    <ListItemText>
+                                        <Typography variant="h6">Comments</Typography>
+                                    </ListItemText>
+                                </ListItem>
+                            </React.Fragment>
+                        }
                         <ListItem button onClick={() => handleDrawerMenuClick('panel/todos')}>
                             <ListItemIcon>
                                 <FAIcon icon={faList} fontSize="lg"/>
@@ -230,20 +234,30 @@ const ViewsWrapper = ({children}) => {
                                 <Typography variant="h6">Todo Management</Typography>
                             </ListItemText>
                         </ListItem>
-                        <ListItem button onClick={() => handleDrawerMenuClick('panel/messages')}>
+                        {ctx.account.permission === 'admin' && <React.Fragment>
+                            <ListItem button onClick={() => handleDrawerMenuClick('panel/messages')}>
+                                <ListItemIcon>
+                                    <FAIcon icon={faInbox} fontSize="lg"/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Typography variant="h6">Messages</Typography>
+                                </ListItemText>
+                            </ListItem>
+                            <ListItem button onClick={() => handleDrawerMenuClick('panel/users')}>
+                                <ListItemIcon>
+                                    <FAIcon icon={faUsers} fontSize="lg"/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Typography variant="h6">Users</Typography>
+                                </ListItemText>
+                            </ListItem>
+                        </React.Fragment>}
+                        <ListItem button onClick={() => handleDrawerMenuClick('panel/profile')}>
                             <ListItemIcon>
-                                <FAIcon icon={faInbox} fontSize="lg"/>
+                                <FAIcon icon={faIdCard} fontSize="lg"/>
                             </ListItemIcon>
                             <ListItemText>
-                                <Typography variant="h6">Messages</Typography>
-                            </ListItemText>
-                        </ListItem>
-                        <ListItem button onClick={() => handleDrawerMenuClick('panel/users')}>
-                            <ListItemIcon>
-                                <FAIcon icon={faUsers} fontSize="lg"/>
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Typography variant="h6">Users</Typography>
+                                <Typography variant="h6">Profile</Typography>
                             </ListItemText>
                         </ListItem>
                         <ListItem button onClick={handleClickOnSigOut}>
@@ -280,7 +294,8 @@ const ViewsWrapper = ({children}) => {
                     <IconButton edge="end" color="inherit" aria-label="menu">
                         <ColorPaletteIcon fontSize="small"/>
                     </IconButton>*/}
-                    <IconButton edge="end" color="inherit" aria-label="menu" onClick={() => history.push('/contact-us')}>
+                    <IconButton edge="end" color="inherit" aria-label="menu"
+                                onClick={() => history.push('/contact-us')}>
                         <EmailIcon fontSize="small"/>
                     </IconButton>
                 </Toolbar>
